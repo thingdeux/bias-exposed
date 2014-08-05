@@ -1,0 +1,22 @@
+bias_exposed
+    requirements: 
+        Celery - For splitting off threads to do analysis
+        RSS Reading library - Reading RSS Feeds
+        BeautifulSoup - Parsing web pages
+
+
+    Celery will split off threads and handle the processing of the data when the analysis is performed.
+    Once the analysis is performed store the information in the DB and generate a slug for the story. Then Cache it.
+    There should be no more than ~4 stories posted per day.
+    Like words will be compared in one column .... opposite in another ... and outliers in yet another.
+
+
+
+
+
+Basic Functionality Goal:    
+    Scour a couple of big name news sites RSS feeds a couple times each day.
+        Find the repeating political stories and/or stories that are big enough to persist for many hours.            
+            Find the similarities and the differences in words used between sites.
+            Use the A.P. and Reuters as a starting point to determine what the facts are.
+            Find the outliers ... the words that were added to swing opinion one way or t'other.

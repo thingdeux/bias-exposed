@@ -1,0 +1,4 @@
+celery==3.1.13
+django==1.6.5
+BeautifulSoup==3.2.1
+South==1.0
