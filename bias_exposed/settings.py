@@ -16,9 +16,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'ew1)j31b!ge%%2)fg1iddk2*1)#h^u(vuu0lfu0yp+w$yd9%3f'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -36,6 +33,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'feed',
+    'parse',
+    'analyze',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -80,3 +80,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+##################
+# LOCAL SETTINGS #
+##################
+try:
+    from local_settings import *
+except ImportError:
+    pass

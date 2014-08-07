@@ -1,8 +1,11 @@
 bias_exposed
-    requirements: 
+    requirements:
         Celery - For splitting off threads to do analysis
         RSS Reading library - Reading RSS Feeds
         BeautifulSoup - Parsing web pages
+        South - For handling Django DB Migrations
+        Numpy - Scientific computing
+        nltk - Natural language processor
 
 
     Celery will split off threads and handle the processing of the data when the analysis is performed.
@@ -20,3 +23,34 @@ Basic Functionality Goal:
             Find the similarities and the differences in words used between sites.
             Use the A.P. and Reuters as a starting point to determine what the facts are.
             Find the outliers ... the words that were added to swing opinion one way or t'other.
+
+
+Finding the same story between sources.
+    Stage 1: Match like words from the title. If more than 4 or so words match it's a possible. (Test this theory) - making sure to throw away common words like 'the' - 'and' - 'of' - etc.
+
+    Stage 2: Match tags (maybe this one first) - if the rss feed comes with tags try to match them first - throwing out generic stuff like 'politics' or 'white house'
+
+    Stage 3: Remove duplicates - find the larger of the two stories if they have been identified as coming from the same story. Merging the two would also be acceptable - that's probably better actually. 
+
+
+
+
+
+[Natural language processing] -- Potential for analysis
+    [Natural-Language Corpus' used]
+        brown (news/politics language)
+        langid
+        names
+        reuters (reuters news samples)
+        wordnet - http://www.nltk.org/howto/wordnet.html
+
+    (These will not be stored in the repo)
+
+
+
+django modules
+    feed - Display/Storage of feeds
+    parse - All things parsing - RSS/BeautifulSoup
+    analyze - Language analysis    
+
+

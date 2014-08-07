@@ -6,3 +6,10 @@ A website that will take a look at the way news networks seperately report top h
 Django
 Celery
 BeautifulSoup
+
+[nltk language corpus']
+brown
+langid
+names
+reuters
+wordnet
