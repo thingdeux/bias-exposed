@@ -54,3 +54,10 @@ django modules
     analyze - Language analysis    
 
 
+
+
+Some things to try:
+    Lexical_Diversity (How many different words is the article using ... ie: Is the vocabulary broad or not)
+
+    Break a string into tokens by splitting on space.
+    FreqDist --Find the frequency of each word used in a string.
