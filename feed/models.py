@@ -11,7 +11,7 @@ class Story(models.Model):
     # Title of the major news story
     title = models.CharField(max_length=512)
     # Body of the story
-    body = models.TextField(default="")
+    body = models.TextField(max_length="3000", default="")
     # Slug for the url of the story being analyzed
     article_slug = models.SlugField(max_length=500)
     # Url of the article
@@ -33,5 +33,5 @@ class Feed(models.Model):
     # RSS Feed URL
     url = models.URLField(max_length=2000, default="")
     # Body of the story behind the RSS Feed
-    body = models.TextField(default="")
-    language_keys = models.charField(default="")
+    body = models.TextField(max_length=3000, default="")
+    language_keys = models.CharField(max_length=3000, default="")
