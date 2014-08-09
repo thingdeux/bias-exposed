@@ -6,6 +6,8 @@ A website that will take a look at the way news networks seperately report top h
 * Django
 * Celery
 * BeautifulSoup
+* feedparser
+* nltk (natural language toolkit)
 
 #### nltk language corpus requirements ####
 * stopwords
