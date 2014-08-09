@@ -34,4 +34,5 @@ class Feed(models.Model):
     url = models.URLField(max_length=2000, default="")
     # Body of the story behind the RSS Feed
     body = models.TextField(max_length=3000, default="")
-    language_keys = models.CharField(max_length=3000, default="")
+    # Analyzed Words
+    analyzed_words = models.CharField(max_length=3000, default="")
