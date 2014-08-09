@@ -9,21 +9,23 @@ class RSSFeed:
             self.feed_url = feed_url
             # Parse the RSS Feed
             feed = feedparser.parse(self.feed_url)
-            feed_items = [a_feed for a_feed in feed['items']]
+            raw_feed_items = [a_feed for a_feed in feed['items']]
             self.source = str(feed['channel']['title'])
-            self.new_items = self.build_feed_list(feed_items)
+            self.feed_items = self.build_feed_list(raw_feed_items)
         except Exception as err:
             print err
             return None
 
     def build_feed_list(self, feed_items):
-        new_items = [{'title': a_feed['title'],
+        new_items = [{'id': num,
+                      'title': a_feed['title'],
+                      'tokenized_title': self.tokenize_string(a_feed['title']),
                       'link': a_feed['link'],
                       'date_published': a_feed['published_parsed']}
-                     for a_feed in feed_items]
+                     for num, a_feed in enumerate(feed_items)]
         return (new_items)
 
-    def analyze_text(self):
+    def analyze_text(self, passed_string):
         try:
             self.passed_string = passed_string
             self.tokenized_string = self.tokenize_string(self.passed_string)
@@ -78,8 +80,42 @@ def get_stop_words():
                      'few', 'more', 'most', 'other', 'some', 'such', 'no',
                      'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too',
                      'very', 's', 't', 'can', 'will', 'just', 'don', 'should',
-                     'now', 'said', 'the', 'said', 'the', 'could', 'during'])
+                     'now', 'said', 'the', 'said', 'the', 'could', 'during',
+                     ','])
 
     return stopWords
 
-test_feed = RSSFeed('http://feeds.reuters.com/Reuters/PoliticsNews?format=xml')
+def find_similarity(word_tokens_A, word_tokens_B):
+    def strip_stop_words(token_list):
+        return (word.lower() for word in token_list
+                if word.lower() not in get_stop_words())
+
+    # Casting to set for speed boost, order does not matter.
+    comparison_a = set(strip_stop_words(word_tokens_A))
+    comparison_b = set(strip_stop_words(word_tokens_B))
+    rank = 0
+
+    for word in comparison_a:
+        if word in comparison_b:
+            rank = rank + 1
+
+    return rank
+
+
+rss_list = []
+#rss_list.append(RSSFeed('http://feeds.reuters.com/Reuters/PoliticsNews?format=xml'))
+rss_list.append(RSSFeed('http://feeds.foxnews.com/foxnews/politics'))
+rss_list.append(RSSFeed('http://rss.cnn.com/rss/cnn_allpolitics.rss'))
+rss_list.append(RSSFeed('http://www.npr.org/rss/rss.php?id=1014'))
+rss_list.append(RSSFeed('http://www.huffingtonpost.com/feeds/verticals/politics/news.xml'))
+
+check_similarity_to = PunktWordTokenizer().tokenize("Obama signs bill to fix delays in veterans healthcare")  # noqa
+print "Checking: Obama signs bill to fix delays in veterans healthcare"
+
+
+for rss_feed in rss_list:
+    print rss_feed.source
+    for item in rss_feed.feed_items:
+        rank = find_similarity(PunktWordTokenizer().tokenize(item['title']), check_similarity_to)
+        if rank > 2:
+            print (str(rank) + "  --->   " + item['title'] + item['link'])
