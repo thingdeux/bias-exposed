@@ -8,8 +8,4 @@ A website that will take a look at the way news networks seperately report top h
 * BeautifulSoup
 
 #### nltk language corpus requirements ####
-* brown
-* langid
-* names
-* reuters
-* wordnet
+* stopwords
