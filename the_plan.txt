@@ -61,3 +61,8 @@ Some things to try:
 
     Break a string into tokens by splitting on space.
     FreqDist --Find the frequency of each word used in a string.
+    
+
+
+
+Reuters DOM ID's - #articleText [Text of article]
