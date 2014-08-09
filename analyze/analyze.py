@@ -1,6 +1,7 @@
 from nltk import FreqDist
 from nltk.tokenize.punkt import PunktWordTokenizer
-from feed.models import Story, Feed
+# from feed.models import Story, Feed
+
 
 class RSSFeed:
     def __init__(self, passed_string):
@@ -22,16 +23,45 @@ class RSSFeed:
     def get_frequency_dist(self, tokenized_string):
         return FreqDist(tokenized_string)
 
-    def find_common_usage(self, length_at_least, times_word_used):
-        return sorted(word for word in set(self.tokenized_string)
+    # Return a list of words that are used more than a certain amount of times.
+    # And are used at least a certain amount of times.
+    # Default is 3 characters long and used at least thrice.
+    def find_common_usage(self, length_at_least=3, times_word_used=3):
+        return sorted(word.lower() for word in set(self.tokenized_string)
                       if len(word) >= length_at_least and
-                      self.frequency_distribution[word] >= times_word_used)
+                      self.frequency_distribution[word] >= times_word_used and
+                      word.lower() not in get_stop_words())
 
-    def simple_test_print(self, name, length=4, times_used=3):
-        print str(name)
+    def simple_test_print(self, name, length=3, times_used=3):
+        print (str(name) + ": ")
         for word in self.find_common_usage(length, times_used):
-            print word
+            print ("   " + word)
         print ("\n\n")
+
+
+# Common english words that should be excluded from the analysis
+def get_stop_words():
+    stopWords = set(['i', 'me', 'my', 'myself', 'we', 'our', 'ours',
+                    'ourselves', 'you', 'your', 'yours', 'yourself',
+                     'yourselves', 'he', 'him', 'his', 'himself', 'she',
+                     'her', 'hers', 'herself', 'it', 'its', 'itself', 'they',
+                     'them', 'their', 'theirs', 'themselves', 'what', 'which',
+                     'who', 'whom', 'this', 'that', 'these', 'those', 'am',
+                     'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have',
+                     'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a',
+                     'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as',
+                     'until', 'while', 'of', 'at', 'by', 'for', 'with',
+                     'about', 'against', 'between', 'into', 'through', 'on',
+                     'before', 'after', 'above', 'below', 'to', 'from', 'up',
+                     'down', 'in', 'out', 'off', 'over', 'under', 'again',
+                     'further', 'then', 'once', 'here', 'there', 'when',
+                     'where', 'why', 'how', 'all', 'any', 'both', 'each',
+                     'few', 'more', 'most', 'other', 'some', 'such', 'no',
+                     'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too',
+                     'very', 's', 't', 'can', 'will', 'just', 'don', 'should',
+                     'now', 'said', 'the', 'said', 'the', 'could', 'during'])
+
+    return stopWords
 
 
 test_string = RSSFeed('(CNN) -- The United States is considering air strikes in Iraq in response to a militant surge in northern areas that has left minority groups trapped by fighting, a U.S. official told CNN.The official said the possibility of such military action "has been something" the Obama administration "has been talking about for some time and the latest news just might meet the threshold for action."Iraq\'s largest Christian town has been overrun by the same militant Islamists who have gained a foothold in parts of eastern Syria and western and northern Iraq. Christians targeted in key Iraqi towns UN: Kids dying from poor living situation The advance by ISIS, or the Islamic State, has caused thousands of Christians in the city to flee, just as other minority groups targeted by it have done. ISIS seeks to create an Islamic caliphate that stretches from Syria to Iraq. It has aggressively targeted Iraqi minority religious groups. The Obama administration is talking with officials in Baghdad and Erbil and is looking at options to provide humanitarian support, including but not limited to Iraqi government air drops, another U.S. official said. White House spokesman Josh Earnest refused to offer any details on possible actions under consideration. Asked specifically about possible air strikes, he said he was not in position to comment on that. Noting Iraq has many problems, he described the current situation as "a particularly acute one" with "innocent populations persecuted just because of their ethnic identity," calling it "disturbing." At the same time, Earnest repeated principles for any possible military involvement in Iraq previously stated by President Barack Obama, declaring no American military solution existed for Iraq and no U.S. ground troops would be sent there. "We can\'t solve these problems for them. These problems can only be solved with Iraqi political solutions," he said. A senior State Department official said the United States also is weighing opening a humanitarian corridor, providing support to Kurdish and Iraqi forces. The United States has 245 military personnel in Iraq, 90 of whom are advisers. The carrier USS George H.W. Bush is also in the region as well as other Navy ships.')  # noqa
@@ -39,7 +69,3 @@ test_string_deux = RSSFeed('The U.S. aircraft carrier George H.W. Bush and her m
 
 test_string.simple_test_print('cnn')
 test_string_deux.simple_test_print('fox')
-
-
-#Stop Words
-#Adding stop words from nltk stop words
