@@ -1,6 +1,7 @@
 from nltk import FreqDist
 from nltk.tokenize.punkt import PunktWordTokenizer
 import feedparser
+from time import localtime
 
 
 class RSSFeed:
@@ -17,17 +18,53 @@ class RSSFeed:
             return None
 
     def build_feed_list(self, feed_items):
+        def check_item_exists(check_string):
+            try:
+                # Check at least 3 feeds for the existence
+                # Of the item parameter
+                for a_feed in feed_items[:3]:
+                    if len(a_feed[check_string]) > 0:
+                        pass
+                    else:
+                        raise NameError
+                        return False
+                return True
+            except Exception as err:
+                print ("Unable to find " + str(err) +
+                       " on " + str(self.source))
+                return False
+
         try:
-            new_items = [{'id': num,
-                          'title': a_feed['title'],
-                          'tokenized_title': self.tokenize_string(a_feed['title']),
-                          'link': a_feed['link'],
-                          'date_published': a_feed['published_parsed']}
-                         for num, a_feed in enumerate(feed_items)]
-            return (new_items)
+            feed_has_title = check_item_exists('title')
+            feed_has_link = check_item_exists('link')
+            feed_has_date = check_item_exists('published_parsed')
+            parsed_items = []
+
+            # There's no need to process the RSS items if they don't
+            # have titles and feed links
+            if feed_has_title is True and feed_has_link is True:
+                for count, feed_item in enumerate(feed_items):
+                    story = {
+                        'id': count,
+                        'title': feed_item['title'],
+                        'tokenized_title': self.tokenize_string(feed_item['title']),
+                        'link': feed_item['link']
+                        # Placeholder for link body text
+                        }
+                    # If there's a published date add it.
+                    if feed_has_date:
+                        story['date'] = feed_item['published_parsed']
+                    else:
+                        story['date'] = localtime()
+
+                    parsed_items.append(story)
+
+                return (parsed_items)
+            else:
+                return None
         except Exception as err:
             print "Unable to build feed items " + str(err)
-            return False
+            return None
 
     def analyze_text(self, passed_string):
         try:
@@ -89,6 +126,7 @@ def get_stop_words():
 
     return stopWords
 
+
 def find_similarity(word_tokens_A, word_tokens_B):
     def strip_stop_words(token_list):
         return (word.lower() for word in token_list
@@ -108,14 +146,14 @@ def find_similarity(word_tokens_A, word_tokens_B):
 
 rss_list = []
 rss_list.append(RSSFeed('http://feeds.reuters.com/Reuters/PoliticsNews?format=xml'))
-#rss_list.append(RSSFeed('http://hosted.ap.org/lineups/POLITICSHEADS.rss?SITE=AP&SECTION=HOME'))
+rss_list.append(RSSFeed('http://hosted.ap.org/lineups/POLITICSHEADS.rss?SITE=AP&SECTION=HOME'))
 rss_list.append(RSSFeed('http://feeds.foxnews.com/foxnews/politics'))
 rss_list.append(RSSFeed('http://rss.cnn.com/rss/cnn_allpolitics.rss'))
 rss_list.append(RSSFeed('http://www.npr.org/rss/rss.php?id=1014'))
 rss_list.append(RSSFeed('http://www.huffingtonpost.com/feeds/verticals/politics/news.xml'))
 
 check_similarity_to = PunktWordTokenizer().tokenize("Obama offers no time limit on Iraq military action")  # noqa
-print "Checking: Obama offers no time limit on Iraq military action"
+# print "Checking: Obama offers no time limit on Iraq military action"
 
 
 for rss_feed in rss_list:
@@ -123,6 +161,4 @@ for rss_feed in rss_list:
     for item in rss_feed.feed_items:
         rank = find_similarity(PunktWordTokenizer().tokenize(item['title']), check_similarity_to)
         if rank > 2:
-            print (str(rank) + "  --->   " + item['title'] + item['link'])
-
-
+            print (str(rank) + "  --->   " + item['title'] + " " + item['link'])
