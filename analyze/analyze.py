@@ -17,13 +17,17 @@ class RSSFeed:
             return None
 
     def build_feed_list(self, feed_items):
-        new_items = [{'id': num,
-                      'title': a_feed['title'],
-                      'tokenized_title': self.tokenize_string(a_feed['title']),
-                      'link': a_feed['link'],
-                      'date_published': a_feed['published_parsed']}
-                     for num, a_feed in enumerate(feed_items)]
-        return (new_items)
+        try:
+            new_items = [{'id': num,
+                          'title': a_feed['title'],
+                          'tokenized_title': self.tokenize_string(a_feed['title']),
+                          'link': a_feed['link'],
+                          'date_published': a_feed['published_parsed']}
+                         for num, a_feed in enumerate(feed_items)]
+            return (new_items)
+        except Exception as err:
+            print "Unable to build feed items " + str(err)
+            return False
 
     def analyze_text(self, passed_string):
         try:
@@ -103,14 +107,15 @@ def find_similarity(word_tokens_A, word_tokens_B):
 
 
 rss_list = []
-#rss_list.append(RSSFeed('http://feeds.reuters.com/Reuters/PoliticsNews?format=xml'))
+rss_list.append(RSSFeed('http://feeds.reuters.com/Reuters/PoliticsNews?format=xml'))
+#rss_list.append(RSSFeed('http://hosted.ap.org/lineups/POLITICSHEADS.rss?SITE=AP&SECTION=HOME'))
 rss_list.append(RSSFeed('http://feeds.foxnews.com/foxnews/politics'))
 rss_list.append(RSSFeed('http://rss.cnn.com/rss/cnn_allpolitics.rss'))
 rss_list.append(RSSFeed('http://www.npr.org/rss/rss.php?id=1014'))
 rss_list.append(RSSFeed('http://www.huffingtonpost.com/feeds/verticals/politics/news.xml'))
 
-check_similarity_to = PunktWordTokenizer().tokenize("Obama signs bill to fix delays in veterans healthcare")  # noqa
-print "Checking: Obama signs bill to fix delays in veterans healthcare"
+check_similarity_to = PunktWordTokenizer().tokenize("Obama offers no time limit on Iraq military action")  # noqa
+print "Checking: Obama offers no time limit on Iraq military action"
 
 
 for rss_feed in rss_list:
@@ -119,3 +124,5 @@ for rss_feed in rss_list:
         rank = find_similarity(PunktWordTokenizer().tokenize(item['title']), check_similarity_to)
         if rank > 2:
             print (str(rank) + "  --->   " + item['title'] + item['link'])
+
+
