@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from nltk import FreqDist
 from nltk.tokenize.punkt import PunktWordTokenizer
 import feedparser
@@ -52,9 +53,11 @@ class RSSFeed:
                     story = {
                         'id': count,
                         'title': feed_item['title'],
-                        'tokenized_title': self.tokenize_string(feed_item['title']),
-                        'link': feed_item['link']
-                        #'quotes': self.build_quote_list()
+                        'tokenized_title': self.tokenize_string(
+                            feed_item['title']),
+                        'link': feed_item['link'],
+                        'quotes': self.build_quote_list(
+                            self.get_http_content(feed_item['link']))
                         }
                     # If there's a published date add it.
                     if feed_has_date:
@@ -95,7 +98,7 @@ class RSSFeed:
             print ("   " + word)
         print ("\n\n")
 
-    def build_quote_list(string):
+    def build_quote_list(self, string):
         quotePositions = []
         quotes = []
         # Iterate over the string and store the position of each parenthesis
@@ -113,6 +116,23 @@ class RSSFeed:
                 except:
                     pass
         return quotes
+
+    # Refactor ......... SLOW!!
+    def get_http_content(self, url):
+        # Use requests library to perform a get request against url
+        http_request = get(url)
+        # process the raw html into a beautiful soup object
+        raw_html = BeautifulSoup(http_request.text)
+        # Performed css filter query
+        selected_html = raw_html.select(get_article_dom_id(self.source))
+        to_return = ""
+        # Remove all tags and turn into strings
+        for element in selected_html:
+            try:
+                to_return = to_return + str(element.text)
+            except:
+                pass
+        return (str(to_return))
 
 
 # Common english words that should be excluded from the analysis
@@ -143,37 +163,34 @@ def get_stop_words():
 
 def get_article_dom_id(feed):
     if feed == "AP":
-        return ("CLASS", ".entry-content")
+        return (".entry-content")
     elif feed == "HuffingtonPost":
-        return ("ID", "#mainentrycontent")
+        return ("#mainentrycontent > p")
     elif feed == "FoxNews":
         # Further Clarification may be needed
-        return ("TAG", "<article>")
+        return ("<article>")
     elif feed == "CNN":
         # Story is attached to Multiple Classes
-        return ("CLASS", "cnn_strylftcntnt > p")
+        return ("cnn_strylftcntnt > p")
     elif feed == "Reuters":
-        return ("ID", "#articleText")
+        return ("#articleText")
     elif feed == "NPR":
-        return ("ID", "#storytext")
+        return ("#storytext")
     elif feed == "NYT":
-        return ("ID", "#story > p")
+        return ("#story > p")
     elif feed == "NBC":
-        return ("CLASS", ".stack-l-content")
+        return (".stack-l-content")
     elif feed == "WashingtonPost":
-        return ("ID", "#article-body")
+        return ("#article-body")
     elif feed == "TheGuardian":
-        return ("ID", "#article-body-blocks")
+        return ("#article-body-blocks")
     elif feed == "ABC":
-        return ("ID", "#innerbody > p")
+        return ("#innerbody > p")
     elif feed == "BBC":
-        return ("CLASS", ".story-body > p")
+        return (".story-body > p")
     elif feed == "WSJ":
-        return ("ID", "#articleBody")   
+        return ("#articleBody")
+
 
 if __name__ == "__main__":
-    test = RSSFeed('http://www.huffingtonpost.com/feeds/verticals/politics/news.xml', "HuffingtonPost")
-    http_request = get(test.feed_items[0]['link'])
-    #print http_request.text
-    #BeautifulSoup(get(feed_item['link']).text)
-    
+    test = RSSFeed("http://www.huffingtonpost.com/feeds/verticals/politics/news.xml", "HuffingtonPost")
