@@ -22,28 +22,28 @@ def compare_tokens(word_tokens_A, word_tokens_B):
 rss_list = []
 
 # AP
-rss_list.append(RSSFeed('http://hosted.ap.org/lineups/POLITICSHEADS.rss?SITE=AP&SECTION=HOME'))
+rss_list.append(RSSFeed('http://hosted.ap.org/lineups/POLITICSHEADS.rss?SITE=AP&SECTION=HOME', "AP"))
 # HuffingtonPost
-rss_list.append(RSSFeed('http://www.huffingtonpost.com/feeds/verticals/politics/news.xml'))
+rss_list.append(RSSFeed('http://www.huffingtonpost.com/feeds/verticals/politics/news.xml', "HuffingtonPost"))
 # FoxNews
-rss_list.append(RSSFeed('http://feeds.foxnews.com/foxnews/politics'))
+rss_list.append(RSSFeed('http://feeds.foxnews.com/foxnews/politics', "FoxNews"))
 # CNN
-rss_list.append(RSSFeed('http://rss.cnn.com/rss/cnn_allpolitics.rss'))
+rss_list.append(RSSFeed('http://rss.cnn.com/rss/cnn_allpolitics.rss', "CNN"))
 # Reuters
-rss_list.append(RSSFeed('http://feeds.reuters.com/Reuters/PoliticsNews?format=xml'))
+rss_list.append(RSSFeed('http://feeds.reuters.com/Reuters/PoliticsNews?format=xml', "Reuters"))
 # NPR
-rss_list.append(RSSFeed('http://www.npr.org/rss/rss.php?id=1014'))
+rss_list.append(RSSFeed('http://www.npr.org/rss/rss.php?id=1014', "NPR"))
 # NYT
-rss_list.append(RSSFeed('http://rss.nytimes.com/services/xml/rss/nyt/Politics.xml'))
+rss_list.append(RSSFeed('http://rss.nytimes.com/services/xml/rss/nyt/Politics.xml', "NYT"))
 # NBC
-rss_list.append(RSSFeed('http://feeds.nbcnews.com/feeds/topstories'))
+rss_list.append(RSSFeed('http://feeds.nbcnews.com/feeds/topstories',"NBC"))
 # Washington Post
-rss_list.append(RSSFeed('http://feeds.washingtonpost.com/rss/rss_election-2012'))
+rss_list.append(RSSFeed('http://feeds.washingtonpost.com/rss/rss_election-2012', "WashingtonPost"))
 # The Guardian
-rss_list.append(RSSFeed('http://feeds.theguardian.com/theguardian/politics/rss'))
+rss_list.append(RSSFeed('http://feeds.theguardian.com/theguardian/politics/rss', "TheGuardian"))
 # ABC
-rss_list.append(RSSFeed('http://feeds.abcnews.com/abcnews/politicsheadlines'))
+rss_list.append(RSSFeed('http://feeds.abcnews.com/abcnews/politicsheadlines', "ABC"))
 # BBC
-rss_list.append(RSSFeed('http://feeds.bbci.co.uk/news/politics/rss.xml'))
+rss_list.append(RSSFeed('http://feeds.bbci.co.uk/news/politics/rss.xml', "BBC"))
 # WSJ
-rss_list.append(RSSFeed('http://online.wsj.com/xml/rss/3_7085.xml'))
+rss_list.append(RSSFeed('http://online.wsj.com/xml/rss/3_7085.xml', "WSJ"))

@@ -2,16 +2,19 @@ from nltk import FreqDist
 from nltk.tokenize.punkt import PunktWordTokenizer
 import feedparser
 from time import localtime
+from bs4 import BeautifulSoup
+from requests import get
 
 
 class RSSFeed:
-    def __init__(self, feed_url):
+    def __init__(self, feed_url, source_name):
         try:
             self.feed_url = feed_url
             # Parse the RSS Feed
             feed = feedparser.parse(self.feed_url)
             raw_feed_items = [a_feed for a_feed in feed['items']]
-            self.source = str(feed['channel']['title'])
+            self.feed_title = str(feed['channel']['title'])
+            self.source = source_name
             self.feed_items = self.build_feed_list(raw_feed_items)
         except Exception as err:
             print err
@@ -51,7 +54,7 @@ class RSSFeed:
                         'title': feed_item['title'],
                         'tokenized_title': self.tokenize_string(feed_item['title']),
                         'link': feed_item['link']
-                        # Placeholder for link body text
+                        #'quotes': self.build_quote_list()
                         }
                     # If there's a published date add it.
                     if feed_has_date:
@@ -79,7 +82,7 @@ class RSSFeed:
 
     # Return a list of words that are used more than a certain amount of times.
     # And are used at least a certain amount of times.
-    # Default is 3 characters long and used at least thrice.
+    # Default is 3 characters long and used ahrice.
     def find_common_usage(self, length_at_least=3, times_word_used=3):
         return sorted(word.lower() for word in set(self.tokenized_string)
                       if len(word) >= length_at_least and
@@ -169,4 +172,8 @@ def get_article_dom_id(feed):
         return ("ID", "#articleBody")   
 
 if __name__ == "__main__":
-    print get_article_dom_id("AP")
+    test = RSSFeed('http://www.huffingtonpost.com/feeds/verticals/politics/news.xml', "HuffingtonPost")
+    http_request = get(test.feed_items[0]['link'])
+    #print http_request.text
+    #BeautifulSoup(get(feed_item['link']).text)
+    
