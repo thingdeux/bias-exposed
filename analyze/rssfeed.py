@@ -92,9 +92,24 @@ class RSSFeed:
             print ("   " + word)
         print ("\n\n")
 
-    def build_quote_list(self, body):
-        test = "test"
-        print test
+    def build_quote_list(string):
+        quotePositions = []
+        quotes = []
+        # Iterate over the string and store the position of each parenthesis
+        for count, letter in enumerate(string):
+            if letter is '"':
+                quotePositions.append(count)
+
+        # Iterate over the stored parethesis positions two at a time
+        # add each block to and return quotes list
+        for count, position in enumerate(sorted(quotePositions)):
+            if count % 2 == 0:
+                try:
+                    quotes.append(string[quotePositions[count] + 1:
+                                         quotePositions[count + 1]])
+                except:
+                    pass
+        return quotes
 
 
 # Common english words that should be excluded from the analysis
