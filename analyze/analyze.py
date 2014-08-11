@@ -20,9 +20,30 @@ def compare_tokens(word_tokens_A, word_tokens_B):
 
 
 rss_list = []
-rss_list.append(RSSFeed('http://feeds.reuters.com/Reuters/PoliticsNews?format=xml'))
+
+# AP
 rss_list.append(RSSFeed('http://hosted.ap.org/lineups/POLITICSHEADS.rss?SITE=AP&SECTION=HOME'))
-rss_list.append(RSSFeed('http://feeds.foxnews.com/foxnews/politics'))
-rss_list.append(RSSFeed('http://rss.cnn.com/rss/cnn_allpolitics.rss'))
-rss_list.append(RSSFeed('http://www.npr.org/rss/rss.php?id=1014'))
+# HuffingtonPost
 rss_list.append(RSSFeed('http://www.huffingtonpost.com/feeds/verticals/politics/news.xml'))
+# FoxNews
+rss_list.append(RSSFeed('http://feeds.foxnews.com/foxnews/politics'))
+# CNN
+rss_list.append(RSSFeed('http://rss.cnn.com/rss/cnn_allpolitics.rss'))
+# Reuters
+rss_list.append(RSSFeed('http://feeds.reuters.com/Reuters/PoliticsNews?format=xml'))
+# NPR
+rss_list.append(RSSFeed('http://www.npr.org/rss/rss.php?id=1014'))
+# NYT
+rss_list.append(RSSFeed('http://rss.nytimes.com/services/xml/rss/nyt/Politics.xml'))
+# NBC
+rss_list.append(RSSFeed('http://feeds.nbcnews.com/feeds/topstories'))
+# Washington Post
+rss_list.append(RSSFeed('http://feeds.washingtonpost.com/rss/rss_election-2012'))
+# The Guardian
+rss_list.append(RSSFeed('http://feeds.theguardian.com/theguardian/politics/rss'))
+# ABC
+rss_list.append(RSSFeed('http://feeds.abcnews.com/abcnews/politicsheadlines'))
+# BBC
+rss_list.append(RSSFeed('http://feeds.bbci.co.uk/news/politics/rss.xml'))
+# WSJ
+rss_list.append(RSSFeed('http://online.wsj.com/xml/rss/3_7085.xml'))

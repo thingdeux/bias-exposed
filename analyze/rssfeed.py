@@ -1,8 +1,8 @@
 from nltk import FreqDist
 from nltk.tokenize.punkt import PunktWordTokenizer
 import feedparser
-from bs4 import BeautifulSoup
 from time import localtime
+
 
 class RSSFeed:
     def __init__(self, feed_url):
@@ -135,4 +135,38 @@ def get_stop_words():
                      'now', 'said', 'the', 'said', 'the', 'could', 'during',
                      ','])
 
-    return stopWords        
+    return stopWords
+
+
+def get_article_dom_id(feed):
+    if feed == "AP":
+        return ("CLASS", ".entry-content")
+    elif feed == "HuffingtonPost":
+        return ("ID", "#mainentrycontent")
+    elif feed == "FoxNews":
+        # Further Clarification may be needed
+        return ("TAG", "<article>")
+    elif feed == "CNN":
+        # Story is attached to Multiple Classes
+        return ("CLASS", "cnn_strylftcntnt > p")
+    elif feed == "Reuters":
+        return ("ID", "#articleText")
+    elif feed == "NPR":
+        return ("ID", "#storytext")
+    elif feed == "NYT":
+        return ("ID", "#story > p")
+    elif feed == "NBC":
+        return ("CLASS", ".stack-l-content")
+    elif feed == "WashingtonPost":
+        return ("ID", "#article-body")
+    elif feed == "TheGuardian":
+        return ("ID", "#article-body-blocks")
+    elif feed == "ABC":
+        return ("ID", "#innerbody > p")
+    elif feed == "BBC":
+        return ("CLASS", ".story-body > p")
+    elif feed == "WSJ":
+        return ("ID", "#articleBody")   
+
+if __name__ == "__main__":
+    print get_article_dom_id("AP")
