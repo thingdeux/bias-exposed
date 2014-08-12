@@ -29,7 +29,8 @@ django modules
 Plan for finding the same story between sources.    
 
     [Each Match gets 4 points]
-    Stage 1: Match like words from the title. If more than 4 or so words match it's a possible. (Test this theory) - making sure to throw away common words like 'the' - 'and' - 'of' - etc.
+    Stage 1: Match like words from the title. If more than 4 or so words match it's a possible.
+    making sure to throw away common words like 'the' - 'and' - 'of' - etc.
 
     [Each Match gets 10 points]
     Stage 2: Exact quote match - Find the quotes from the story (text between "") and try matching them.
@@ -44,6 +45,7 @@ Plan for finding the same story between sources.
 [Natural language processing]
     (These will not be stored in the repo)
     [Natural-Language Corpus' used]
+        stopwords - common english language words that should be filtered out (ex: if / that / between / in)
         wordnet - http://www.nltk.org/howto/wordnet.html (used for finding synonyms)
 
 
@@ -52,8 +54,5 @@ Some things to try:
     FreqDist --Find the frequency of each word (unique) used in a string.
 
 [DOM Discovery]
-    Feeds will keep a table of DOM ID's for article body text.  I
+    Feeds will keep a table of DOM ID's for article body text.
     If an ID is no longer valid the feed will be flagged and not used until I correct it.
-    
-    [ID's]
-        Reuters DOM ID's - #articleText [Text of article]

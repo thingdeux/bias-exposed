@@ -1,6 +1,6 @@
-# Repository for http://bias.exposed #
+# Bias.Exposed #
 
-A website that will take a look at the way news networks seperately report top headlines.
+A website that will take a look at the way news networks separately report top headlines.
 
 #### Tech ####
 * Django

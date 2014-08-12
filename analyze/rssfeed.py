@@ -83,9 +83,9 @@ class RSSFeed:
     def get_frequency_dist(self, tokenized_string):
         return FreqDist(tokenized_string)
 
-    # Return a list of words that are used more than a certain amount of times.
-    # And are used at least a certain amount of times.
-    # Default is 3 characters long and used ahrice.
+    # Return a list of words that are of a specified list and
+    # used more than a certain amount of times.
+    # Default is 3 characters long and used thrice.
     def find_common_usage(self, length_at_least=3, times_word_used=3):
         return sorted(word.lower() for word in set(self.tokenized_string)
                       if len(word) >= length_at_least and
@@ -107,7 +107,7 @@ class RSSFeed:
                 quotePositions.append(count)
 
         # Iterate over the stored parethesis positions two at a time
-        # add each block to and return quotes list
+        # add each quote block to a list and return it.
         for count, position in enumerate(sorted(quotePositions)):
             if count % 2 == 0:
                 try:
@@ -123,10 +123,10 @@ class RSSFeed:
         http_request = get(url)
         # process the raw html into a beautiful soup object
         raw_html = BeautifulSoup(http_request.text)
-        # Performed css filter query
+        # Perform css filter query
         selected_html = raw_html.select(get_article_dom_id(self.source))
         to_return = ""
-        # Remove all tags and turn into strings
+        # Remove all tags and transform the html into a string
         for element in selected_html:
             try:
                 to_return = to_return + str(element.text)
@@ -167,10 +167,8 @@ def get_article_dom_id(feed):
     elif feed == "HuffingtonPost":
         return ("#mainentrycontent > p")
     elif feed == "FoxNews":
-        # Further Clarification may be needed
         return ("<article>")
     elif feed == "CNN":
-        # Story is attached to Multiple Classes
         return ("cnn_strylftcntnt > p")
     elif feed == "Reuters":
         return ("#articleText")
