@@ -32,7 +32,23 @@ class Feed(models.Model):
     title = models.CharField(max_length=512)
     # RSS Feed URL
     url = models.URLField(max_length=2000, default="")
-    # Body of the story behind the RSS Feed
-    body = models.TextField(max_length=3000, default="")
-    # Analyzed Words
-    analyzed_words = models.CharField(max_length=3000, default="")
+
+
+class ParseRule(models.Model):
+    """
+    RSS Feeds link to articles that may require certain tweaks
+    in order to be crawled properly (ex: DOM ID's, string strip rules)
+    """
+    source = models.CharField(max_length=128)
+    dom_selector = models.CharField(max_length=1028)
+    caused_error = models.BooleanField(default=False)
+
+
+class Word(models.Model):
+    """
+    Words from articles
+    Will make for easier manual Frequency distribution across multiple articles
+    """
+    # A word can be tied to many feeds
+    feeds = models.ManyToManyField(Feed)
+    word = models.CharField(max_length=100, unique=True)

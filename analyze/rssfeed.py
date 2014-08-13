@@ -10,6 +10,7 @@ from requests import get
 # Don't need that
 FEED_LIMIT = 15
 
+
 class RSSFeed:
     def __init__(self, feed_url, source_name):
         try:
@@ -199,7 +200,3 @@ def get_article_dom_id(feed):
         return (".story-body > p")
     elif feed == "WSJ":
         return ("#articleBody")
-
-
-if __name__ == "__main__":
-    test = RSSFeed("http://www.huffingtonpost.com/feeds/verticals/politics/news.xml", "HuffingtonPost")
