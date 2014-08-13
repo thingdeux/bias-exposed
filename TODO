@@ -1,11 +1,7 @@
 Remove sentences from tokenized words
 
 Need to make sure the following pull properly:
-    
-# AP
-# FoxNews
-# CNN
-# Reuters
+
 # NPR
 # NYT
 # NBC
@@ -16,3 +12,11 @@ Need to make sure the following pull properly:
 # WSJ
 
 
+If there are any issues reading feed lists or performing any of the stages - flag the feed.
+    [Failure Conditions]
+        Connection reset or time out --- wait and restart check in 10 mins (CNN with > 40 items)
+
+
+
+
+Quote Builder: Catch empty quote list

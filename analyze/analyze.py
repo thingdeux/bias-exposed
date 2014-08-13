@@ -47,3 +47,4 @@ rss_list.append(RSSFeed('http://feeds.abcnews.com/abcnews/politicsheadlines', "A
 rss_list.append(RSSFeed('http://feeds.bbci.co.uk/news/politics/rss.xml', "BBC"))
 # WSJ
 rss_list.append(RSSFeed('http://online.wsj.com/xml/rss/3_7085.xml', "WSJ"))
+

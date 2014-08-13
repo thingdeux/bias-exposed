@@ -6,6 +6,9 @@ from time import localtime
 from bs4 import BeautifulSoup
 from requests import get
 
+# Some feeds have more than 40 entries (I'm looking at you CNN)
+# Don't need that
+FEED_LIMIT = 15
 
 class RSSFeed:
     def __init__(self, feed_url, source_name):
@@ -49,15 +52,17 @@ class RSSFeed:
             # There's no need to process the RSS items if they don't
             # have titles and feed links
             if feed_has_title is True and feed_has_link is True:
-                for count, feed_item in enumerate(feed_items):
+                for count, feed_item in enumerate(feed_items[:FEED_LIMIT]):
+                    print ("Requesting HTML on Feed #" + str(count))
+                    raw_html = self.get_http_content(feed_item['link'])
                     story = {
                         'id': count,
                         'title': feed_item['title'],
                         'tokenized_title': self.tokenize_string(
                             feed_item['title']),
                         'link': feed_item['link'],
-                        'quotes': self.build_quote_list(
-                            self.get_http_content(feed_item['link']))
+                        'raw_html': raw_html,
+                        'quotes': self.build_quote_list(raw_html)
                         }
                     # If there's a published date add it.
                     if feed_has_date:
@@ -76,6 +81,7 @@ class RSSFeed:
 
     # Turn raw strings to word tokens usable by nltk
     def tokenize_string(self, passed_string):
+        print ("Tokenizing Title")
         if len(passed_string) > 0:
             return (PunktWordTokenizer().tokenize(passed_string))
 
@@ -99,23 +105,28 @@ class RSSFeed:
         print ("\n\n")
 
     def build_quote_list(self, string):
+        print ("Building quote list")
         quotePositions = []
         quotes = []
         # Iterate over the string and store the position of each parenthesis
         for count, letter in enumerate(string):
-            if letter is '"':
+            if letter == '"':
                 quotePositions.append(count)
 
         # Iterate over the stored parethesis positions two at a time
         # add each quote block to a list and return it.
         for count, position in enumerate(sorted(quotePositions)):
-            if count % 2 == 0:
+            if count % 2 == 0 or count == 0:
                 try:
                     quotes.append(string[quotePositions[count] + 1:
                                          quotePositions[count + 1]])
-                except:
+                except Exception as err:
+                    print err
                     pass
-        return quotes
+        if len(quotes) >= 1:
+            return quotes
+        else:
+            return None
 
     # Refactor ......... SLOW!!
     def get_http_content(self, url):
@@ -129,10 +140,10 @@ class RSSFeed:
         # Remove all tags and transform the html into a string
         for element in selected_html:
             try:
-                to_return = to_return + str(element.text)
+                to_return = to_return + element.text
             except:
                 pass
-        return (str(to_return))
+        return (to_return)
 
 
 # Common english words that should be excluded from the analysis
@@ -167,9 +178,9 @@ def get_article_dom_id(feed):
     elif feed == "HuffingtonPost":
         return ("#mainentrycontent > p")
     elif feed == "FoxNews":
-        return ("<article>")
+        return ("article")
     elif feed == "CNN":
-        return ("cnn_strylftcntnt > p")
+        return (".cnn_storypgraphtxt")
     elif feed == "Reuters":
         return ("#articleText")
     elif feed == "NPR":
