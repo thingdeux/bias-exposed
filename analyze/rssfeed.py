@@ -53,8 +53,7 @@ class RSSFeed:
             # There's no need to process the RSS items if they don't
             # have titles and feed links
             if feed_has_title is True and feed_has_link is True:
-                for count, feed_item in enumerate(feed_items[:FEED_LIMIT]):
-                    print ("Requesting HTML on Feed #" + str(count))
+                for count, feed_item in enumerate(feed_items[:FEED_LIMIT]):                    
                     raw_html = self.get_http_content(feed_item['link'])
                     story = {
                         'id': count,
@@ -81,8 +80,7 @@ class RSSFeed:
             return None
 
     # Turn raw strings to word tokens usable by nltk
-    def tokenize_string(self, passed_string):
-        print ("Tokenizing Title")
+    def tokenize_string(self, passed_string):        
         if len(passed_string) > 0:
             return (PunktWordTokenizer().tokenize(passed_string))
 
@@ -97,21 +95,14 @@ class RSSFeed:
         return sorted(word.lower() for word in set(self.tokenized_string)
                       if len(word) >= length_at_least and
                       self.frequency_distribution[word] >= times_word_used and
-                      word.lower() not in get_stop_words())
+                      word.lower() not in get_stop_words())  
 
-    def simple_test_print(self, name, length=3, times_used=3):
-        print (str(name) + ": ")
-        for word in self.find_common_usage(length, times_used):
-            print ("   " + word)
-        print ("\n\n")
-
-    def build_quote_list(self, string):
-        print ("Building quote list")
+    def build_quote_list(self, string):        
         quotePositions = []
         quotes = []
         # Iterate over the string and store the position of each parenthesis
         for count, letter in enumerate(string):
-            if letter == '"':
+            if letter == '"' or letter == u'\u201d' or letter == u'\u201c':
                 quotePositions.append(count)
 
         # Iterate over the stored parethesis positions two at a time
@@ -173,30 +164,7 @@ def get_stop_words():
     return stopWords
 
 
-def get_article_dom_id(feed):
-    if feed == "AP":
-        return (".entry-content")
-    elif feed == "HuffingtonPost":
-        return ("#mainentrycontent > p")
-    elif feed == "FoxNews":
-        return ("article")
-    elif feed == "CNN":
-        return (".cnn_storypgraphtxt")
-    elif feed == "Reuters":
-        return ("#articleText")
-    elif feed == "NPR":
-        return ("#storytext")
-    elif feed == "NYT":
-        return ("#story > p")
-    elif feed == "NBC":
-        return (".stack-l-content")
-    elif feed == "WashingtonPost":
-        return ("#article-body")
-    elif feed == "TheGuardian":
-        return ("#article-body-blocks")
-    elif feed == "ABC":
-        return ("#innerbody > p")
-    elif feed == "BBC":
-        return (".story-body > p")
-    elif feed == "WSJ":
-        return ("#articleBody")
+def get_article_dom_id(string):
+    # Hacky, don't like it
+    from models import get_parse_rule
+    return (get_parse_rule(string))

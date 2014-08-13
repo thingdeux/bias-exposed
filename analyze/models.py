@@ -40,6 +40,9 @@ def analyze_feed(feed_name):
 
 
 def create_initial_rss_feeds():
+    """
+    Create the initial feed values in the RSS feed table
+    """
     RSS_FEEDS = [
         # Breaking PEP8 for readability
         ["http://hosted.ap.org/lineups/POLITICSHEADS.rss?SITE=AP&SECTION=HOME", "AP"],
@@ -53,10 +56,44 @@ def create_initial_rss_feeds():
         ["http://feeds.washingtonpost.com/rss/rss_election-2012", "WashingtonPost"],
         ["http://feeds.theguardian.com/theguardian/politics/rss", "TheGuardian"],
         ["http://feeds.abcnews.com/abcnews/politicsheadlines", "ABC"],
-        ["http://feeds.bbci.co.uk/news/politics/rss.xml", "BCC"],
-        ["http://online.wsj.com/xml/rss/3_7085.xml", "WSJ"]
+        ["http://feeds.bbci.co.uk/news/politics/rss.xml", "BBC"]
+    ]
+    bulk_list = []
+    for feed in RSS_FEEDS:
+        bulk_list.append(FeedSource(source=feed[1], rss_feed_url=feed[0]))
+
+    FeedSource.objects.bulk_create(bulk_list)
+
+
+def create_initial_parse_rules():
+    """
+    Create the initial feed values in the parse rules table
+    """
+    PARSE_RULES = [
+        ["AP", ".entry-content"],
+        ["HuffingtonPost", "#mainentrycontent > p"],
+        ["FoxNews", "article"],
+        ["CNN", ".cnn_storypgraphtxt"],
+        ["Reuters", "#articleText"],
+        ["NPR", "#storytext"],
+        ["NYT", "#story > p"],
+        ["NBC", ".stack-l-content"],
+        ["WashingtonPost", "#article-body"],
+        ["TheGuardian", "#article-body-blocks"],
+        ["ABC", "#innerbody > div > p"],
+        ["BBC", ".story-body > p"]
     ]
 
-    for feed in RSS_FEEDS:
-        new_feed = FeedSource(source=feed[1], rss_feed_url=feed[0])
-        new_feed.save()
+    bulk_list = []
+    for rule in PARSE_RULES:
+        bulk_list.append(ParseRule(source=rule[0], dom_selector=rule[1]))
+
+    ParseRule.objects.bulk_create(bulk_list)
+
+
+def get_parse_rule(feed_name):
+    rule = ParseRule.objects.filter(source=feed_name)
+    if rule:
+        return (rule[0].dom_selector)
+    else:
+        return None
