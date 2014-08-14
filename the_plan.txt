@@ -1,7 +1,7 @@
 bias_exposed
     requirements:
         Celery - For splitting off threads to do analysis
-        RSS Reading library - Reading RSS Feeds
+        Feedparser - Reading RSS Feeds
         BeautifulSoup - Parsing web pages
         South - For handling Django DB Migrations
         Numpy - Scientific computing
@@ -26,10 +26,10 @@ django modules
 
 
 [Dev Notes]
-Plan for finding the same story between sources.    
+Plan for finding the same story between sources. Matching will occur in 4 stages.
 
     [Each Match gets 4 points]
-    Stage 1: Match like words from the title. If more than 4 or so words match it's a possible.
+    Stage 1: Match like words from the title. 
     making sure to throw away common words like 'the' - 'and' - 'of' - etc.
 
     [Each Match gets 10 points]
@@ -39,7 +39,7 @@ Plan for finding the same story between sources.
     Stage 3: Match exact sentences
 
     [Each Match gets 3 points]
-    Stage 4: Token word match on the body of the story.
+    Stage 4: Token word match on the body of the story for the most recurring words.
 
 
 [Natural language processing]

@@ -5,8 +5,6 @@ from datetime import datetime
 class Story(models.Model):
     """
     A major news story. There will be one of these for many Feeds.
-    The major story will be pulled from reuters newswire
-    (as agnostic a news source as is available currently)
     """
     # Title of the major news story
     title = models.CharField(max_length=512)
@@ -17,6 +15,9 @@ class Story(models.Model):
     # Url of the article
     url = models.URLField(max_length=2000)
     post_date = models.DateField(auto_now=False, default=datetime.now())
+
+    def __unicode__(self):
+        return self.title
 
 
 class Feed(models.Model):
@@ -33,16 +34,8 @@ class Feed(models.Model):
     # RSS Feed URL
     url = models.URLField(max_length=2000, default="")
 
-
-class ParseRule(models.Model):
-    """
-    RSS Feeds link to articles that may require certain tweaks
-    in order to be crawled properly (ex: DOM ID's, string strip rules)
-    """
-    source = models.CharField(max_length=128)
-    dom_selector = models.CharField(max_length=1028)
-    caused_error = models.BooleanField(default=False)
-
+    def __unicode__(self):
+        return self.url
 
 class Word(models.Model):
     """
@@ -52,3 +45,6 @@ class Word(models.Model):
     # A word can be tied to many feeds
     feeds = models.ManyToManyField(Feed)
     word = models.CharField(max_length=100, unique=True)
+
+    def __unicode__(self):
+        return self.word
