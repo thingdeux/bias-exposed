@@ -1,11 +1,14 @@
 from django.db import models
-from feed.models import Story, Feed, Word
+# from feed.models import Story, Feed, Word
 from rssfeed import RSSFeed
 
 
 class FeedSource(models.Model):
-    source = models.CharField(max_length=128)
-    rss_feed_url = models.CharField(max_length=2000)
+    source = models.CharField("News Source", max_length=128, unique=True)
+    rss_feed_url = models.URLField("RSS Feed URL", max_length=2000)
+
+    def __unicode__(self):
+        return self.source
 
 
 class ParseRule(models.Model):
@@ -13,9 +16,12 @@ class ParseRule(models.Model):
     RSS Feeds link to articles that may require certain tweaks
     in order to be crawled properly (ex: DOM ID's, string strip rules)
     """
-    source = models.CharField(max_length=128)
-    dom_selector = models.CharField(max_length=1028)
-    caused_error = models.BooleanField(default=False)
+    source = models.ForeignKey(FeedSource)
+    dom_selector = models.CharField("CSS Selection Query", max_length=1028)
+    caused_error = models.BooleanField("Parsing Error?", default=False)
+
+    def __unicode__(self):
+        return self.source.source
 
 
 def analyze_all_feeds():
@@ -28,9 +34,9 @@ def analyze_all_feeds():
 
 
 def analyze_feed(feed_name):
-    feed = FeedSource.objects.filter(source=feed_name)
+    feed = FeedSource.objects.get(source=feed_name)
     if feed:
-        feed_processed = RSSFeed(feed[0].rss_feed_url, feed[0].source)
+        feed_processed = RSSFeed(feed.rss_feed_url, feed.source)
         if feed_processed is not None:
             return feed_processed
         else:
@@ -70,18 +76,18 @@ def create_initial_parse_rules():
     Create the initial feed values in the parse rules table
     """
     PARSE_RULES = [
-        ["AP", ".entry-content"],
-        ["HuffingtonPost", "#mainentrycontent > p"],
-        ["FoxNews", "article"],
-        ["CNN", ".cnn_storypgraphtxt"],
-        ["Reuters", "#articleText"],
-        ["NPR", "#storytext"],
-        ["NYT", "#story > p"],
-        ["NBC", ".stack-l-content"],
-        ["WashingtonPost", "#article-body"],
-        ["TheGuardian", "#article-body-blocks"],
-        ["ABC", "#innerbody > div > p"],
-        ["BBC", ".story-body > p"]
+        [FeedSource.objects.get(source="AP"), ".entry-content"],
+        [FeedSource.objects.get(source="HuffingtonPost"), "#mainentrycontent > p"],
+        [FeedSource.objects.get(source="FoxNews"), "article"],
+        [FeedSource.objects.get(source="CNN"), ".cnn_storypgraphtxt"],
+        [FeedSource.objects.get(source="Reuters"), "#articleText"],
+        [FeedSource.objects.get(source="NPR"), "#storytext"],
+        [FeedSource.objects.get(source="NYT"), "#story > p"],
+        [FeedSource.objects.get(source="NBC"), ".stack-l-content"],
+        [FeedSource.objects.get(source="WashingtonPost"), "#article-body"],
+        [FeedSource.objects.get(source="TheGuardian"), "#article-body-blocks"],
+        [FeedSource.objects.get(source="ABC"), "#innerbody > div > p"],
+        [FeedSource.objects.get(source="BBC"), ".story-body > p"]
     ]
 
     bulk_list = []
@@ -92,8 +98,9 @@ def create_initial_parse_rules():
 
 
 def get_parse_rule(feed_name):
-    rule = ParseRule.objects.filter(source=feed_name)
+    # Should only ever be one parse rule per feed.
+    rule = ParseRule.objects.get(source__source=feed_name)
     if rule:
-        return (rule[0].dom_selector)
+        return (rule.dom_selector)
     else:
         return None
