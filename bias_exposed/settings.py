@@ -81,6 +81,16 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+CELERY_ENABLE_UTC = True
+CELERY_TIMEZONE = "America/Los_Angeles"
+# Only run 4 threads total
+CELERYD_CONCURRENCY = 4
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+BROKER_URL = 'redis://localhost:6379/0'
+
+
+
+
 ##################
 # LOCAL SETTINGS #
 ##################

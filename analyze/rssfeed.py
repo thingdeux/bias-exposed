@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from requests import get
 
 # Some feeds have more than 40 entries (I'm looking at you CNN)
-# Don't need that
+# Don't need that many.
 FEED_LIMIT = 15
 
 
