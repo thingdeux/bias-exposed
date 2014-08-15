@@ -9,6 +9,8 @@ from requests import get
 # Some feeds have more than 40 entries (I'm looking at you CNN)
 # Don't need that many.
 FEED_LIMIT = 15
+MIN_WORD_USAGE = 3
+MIN_WORD_LENGTH = 3
 
 
 class RSSFeed:
@@ -53,7 +55,7 @@ class RSSFeed:
             # There's no need to process the RSS items if they don't
             # have titles and feed links
             if feed_has_title is True and feed_has_link is True:
-                for count, feed_item in enumerate(feed_items[:FEED_LIMIT]):                    
+                for count, feed_item in enumerate(feed_items[:FEED_LIMIT]):
                     raw_html = self.get_http_content(feed_item['link'])
                     story = {
                         'id': count,
@@ -70,6 +72,15 @@ class RSSFeed:
                     else:
                         story['date'] = localtime()
 
+                    if len(story['raw_html']) > 0:
+                        try:
+                            tokenized_string = self.tokenize_string(
+                                story['raw_html'])
+                            story['word_usage'] = self.count_usage(
+                                tokenized_string)
+                        except Exception as err:
+                            print err
+                            story['word_usage'] = None
                     parsed_items.append(story)
 
                 return (parsed_items)
@@ -80,24 +91,34 @@ class RSSFeed:
             return None
 
     # Turn raw strings to word tokens usable by nltk
-    def tokenize_string(self, passed_string):        
+    def tokenize_string(self, passed_string):
         if len(passed_string) > 0:
             return (PunktWordTokenizer().tokenize(passed_string))
 
-    # Acquire a frequency distribution of tokens
-    def get_frequency_dist(self, tokenized_string):
-        return FreqDist(tokenized_string)
+    def count_usage(self, word_list):
+        """
+        Count the number of times a word was used in an article
+        From a tokenized list of strings.
+        """
 
-    # Return a list of words that are of a specified list and
-    # used more than a certain amount of times.
-    # Default is 3 characters long and used thrice.
-    def find_common_usage(self, length_at_least=3, times_word_used=3):
-        return sorted(word.lower() for word in set(self.tokenized_string)
-                      if len(word) >= length_at_least and
-                      self.frequency_distribution[word] >= times_word_used and
-                      word.lower() not in get_stop_words())  
+        # Only return words that have been used more than x amount of times.
+        def usage_limit(word_dic):
+            new_dic = {}
+            for word in word_dic.keys():
+                if word_dic[word] > MIN_WORD_USAGE:
+                    new_dic[word] = word_dic[word]
+            return new_dic
 
-    def build_quote_list(self, string):        
+        count = {}
+        for word in word_list:
+            if len(word) > MIN_WORD_LENGTH and word not in get_stop_words():
+                try:
+                    count[word] = count[word] + 1
+                except:
+                    count[word] = 1
+        return (usage_limit(count))
+
+    def build_quote_list(self, string):
         quotePositions = []
         quotes = []
         # Iterate over the string and store the position of each parenthesis
@@ -159,7 +180,7 @@ def get_stop_words():
                      'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too',
                      'very', 's', 't', 'can', 'will', 'just', 'don', 'should',
                      'now', 'said', 'the', 'said', 'the', 'could', 'during',
-                     ','])
+                     ',', 'also'])
 
     return stopWords
 

@@ -104,7 +104,3 @@ def get_parse_rule(feed_name):
         return (rule.dom_selector)
     else:
         return None
-
-def find_similarities_to_story(storyObj):
-    test = Story.objects.all()
-    print test

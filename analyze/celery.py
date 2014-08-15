@@ -9,20 +9,15 @@ from django.conf import settings
 
 # set the default Django settings module for celery
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bias_exposed.settings')
-from analyze.models import analyze_feed, find_similarities_to_story
+from analyze.models import analyze_feed
 
 app = Celery('analyze')
 
 # Pull celery config info from Django Settings.
 app.config_from_object('django.conf:settings')
-app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+# app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
 @shared_task
 def queueFeed(feed_name):
     return analyze_feed(feed_name)
-
-
-@shared_task
-def checkStory(story):
-    return (find_similarities_to_story(story))
