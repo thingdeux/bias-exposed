@@ -81,6 +81,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR + '/templates/')
+)
+
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = "America/Los_Angeles"
 # Only run 4 threads total

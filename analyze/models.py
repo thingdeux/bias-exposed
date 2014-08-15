@@ -1,5 +1,5 @@
 from django.db import models
-# from feed.models import Story, Feed, Word
+from feed.models import Story, Feed, Word
 from rssfeed import RSSFeed
 
 
@@ -104,3 +104,7 @@ def get_parse_rule(feed_name):
         return (rule.dom_selector)
     else:
         return None
+
+def find_similarities_to_story(storyObj):
+    test = Story.objects.all()
+    print test

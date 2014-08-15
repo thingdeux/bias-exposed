@@ -1,3 +1,7 @@
 from django.shortcuts import render
+from analyze.models import FeedSource
 
-# Create your views here.
+
+def Index(request):
+    feedSources = FeedSource.objects.all()
+    return render(request, 'analyze/index.html', {'sources': feedSources})

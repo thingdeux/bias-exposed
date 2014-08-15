@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+from celery import checkStory
 
 
 class Story(models.Model):
@@ -48,3 +49,5 @@ class Word(models.Model):
 
     def __unicode__(self):
         return self.word
+
+
