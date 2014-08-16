@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from nltk import FreqDist
-from nltk.tokenize.punkt import PunktWordTokenizer
+from nltk.tokenize.punkt import PunktWordTokenizer, PunktSentenceTokenizer
 import feedparser
 from time import localtime
 from bs4 import BeautifulSoup
@@ -74,13 +73,20 @@ class RSSFeed:
 
                     if len(story['raw_html']) > 0:
                         try:
-                            tokenized_string = self.tokenize_string(
+                            # Create tokens of the words in the article
+                            token = [word.lower() for word in
+                                     self.tokenize_string(story['raw_html'])
+                                     if word not in get_stop_words()]
+                            # Count the number of times each word is usage
+                            # If it is at least as long as the minium above
+                            # And used x amount of times.
+                            story['word_usage'] = self.count_usage(token)
+                            story['tokenized_body'] = set(token)
+                            # Break the article up by sentences
+                            story['sentences'] = self.tokenize_by_sentence(
                                 story['raw_html'])
-                            story['word_usage'] = self.count_usage(
-                                tokenized_string)
                         except Exception as err:
                             print err
-                            story['word_usage'] = None
                     parsed_items.append(story)
 
                 return (parsed_items)
@@ -92,8 +98,18 @@ class RSSFeed:
 
     # Turn raw strings to word tokens usable by nltk
     def tokenize_string(self, passed_string):
-        if len(passed_string) > 0:
-            return (PunktWordTokenizer().tokenize(passed_string))
+        try:
+            if len(passed_string) > 0:
+                return (PunktWordTokenizer().tokenize(passed_string))
+        except:
+            print "Unable to tokenize into sentences"
+
+    def tokenize_by_sentence(self, passed_string):
+        try:
+            if len(passed_string) > 0:
+                return (PunktSentenceTokenizer().tokenize(passed_string))
+        except:
+            print "Unable to tokenize into sentences"
 
     def count_usage(self, word_list):
         """
@@ -105,13 +121,13 @@ class RSSFeed:
         def usage_limit(word_dic):
             new_dic = {}
             for word in word_dic.keys():
-                if word_dic[word] > MIN_WORD_USAGE:
+                if word_dic[word] >= MIN_WORD_USAGE:
                     new_dic[word] = word_dic[word]
             return new_dic
 
         count = {}
         for word in word_list:
-            if len(word) > MIN_WORD_LENGTH and word not in get_stop_words():
+            if len(word) >= MIN_WORD_LENGTH:
                 try:
                     count[word] = count[word] + 1
                 except:
@@ -148,7 +164,7 @@ class RSSFeed:
         # process the raw html into a beautiful soup object
         raw_html = BeautifulSoup(http_request.text)
         # Perform css filter query
-        selected_html = raw_html.select(get_article_dom_id(self.source))
+        selected_html = raw_html.select(self.get_article_dom_id(self.source))
         to_return = ""
         # Remove all tags and transform the html into a string
         for element in selected_html:
@@ -157,6 +173,10 @@ class RSSFeed:
             except:
                 pass
         return (to_return)
+
+    def get_article_dom_id(self, string):
+        from models import get_parse_rule
+        return (get_parse_rule(string))
 
 
 # Common english words that should be excluded from the analysis
@@ -183,9 +203,3 @@ def get_stop_words():
                      ',', 'also'])
 
     return stopWords
-
-
-def get_article_dom_id(string):
-    # Hacky, don't like it
-    from models import get_parse_rule
-    return (get_parse_rule(string))

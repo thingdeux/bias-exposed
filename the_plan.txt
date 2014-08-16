@@ -1,24 +1,24 @@
 bias_exposed
     requirements:
         Celery - For splitting off threads to do analysis
+        Redis - back-end and result DB for celery
         Feedparser - Reading RSS Feeds
         BeautifulSoup - Parsing web pages
-        South - For handling Django DB Migrations
+        *South - For handling Django DB Migrations ---- May just wait on Django 1.7 for deployment (any day now!)
         Numpy - Scientific computing
         nltk - Natural language processor
 
-    Celery will split off threads and handle the processing of the data when the analysis is performed.
+    Celery will split off threads and handle the processing of the data when the analysis is performed.    
     Once the analysis is performed store the information in the DB and generate a slug for the story. Then Cache it.
     There should be no more than ~4 stories posted per day.
     Like words will be compared in one column .... opposite in another ... and outliers in yet another.
 
 
 Basic Functionality Goal:    
-    Scour a couple of big name news sites RSS feeds a couple times each day.
-        Find the repeating political stories and/or stories that are big enough to persist for many hours.            
-            Find the similarities and the differences in words used between sites.
-            Use the A.P. and/or Reuters as a starting point to determine what the facts are.
-            Find the outliers ... the words that were added to swing opinion one way or t'other.
+    Scour a couple of big name news sites RSS feeds twice a day (more than enough)
+        Match articles using the rules below (see dev notes):            
+            Find the similarities and the differences in words used between sites.            
+            Find the outliers ... the words that may have been added to swing opinion one way or t'other.
 
 django modules
     feed - Display/Storage of feeds    
@@ -50,8 +50,7 @@ Plan for finding the same story between sources. Matching will occur in 4 stages
 
 
 Some things to try:
-    Lexical_Diversity (How many different words is the article using ... ie: Is the vocabulary broad or not)    
-    FreqDist --Find the frequency of each word (unique) used in a string.
+    Lexical_Diversity (How many different words is the article using ... ie: Is the vocabulary broad or not)        
 
 [DOM Discovery]
     Feeds will keep a table of DOM ID's for article body text.

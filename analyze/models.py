@@ -1,7 +1,8 @@
 from django.db import models
 from feed.models import Story, Feed, Word
 from rssfeed import RSSFeed
-
+from django.conf import settings
+import redis
 
 class FeedSource(models.Model):
     source = models.CharField("News Source", max_length=128, unique=True)
@@ -104,3 +105,29 @@ def get_parse_rule(feed_name):
         return (rule.dom_selector)
     else:
         return None
+
+
+def compare_feed(main_feed, all_feeds):
+    # r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
+    match_count = 0
+
+    # Iterate over the main_feeds irticles one at al time
+    for main_feed_item in main_feed.feed_items:
+        # Look at all of the feeds in the all_feeds object
+        for rss_feed in all_feeds:
+            if main_feed.source is not rss_feed.source:
+                for other_feed_item in rss_feed.feed_items:
+                    # Check to see if each quote in the current article is in another_feeds            
+                    # Quote list
+                    try:
+                        for quote in main_feed_item['quotes']:
+                            if quote in other_feed_item['quotes']:
+                                match_count += 10
+                    except:
+                        pass
+    return (match_count)
+
+
+def test_redis():
+    r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
+    return r
