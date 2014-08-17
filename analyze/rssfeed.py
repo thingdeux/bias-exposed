@@ -43,7 +43,7 @@ class RSSFeed:
             except Exception as err:
                 print ("Unable to find " + str(err) +
                        " on " + str(self.source))
-                return False
+                return None
 
         try:
             feed_has_title = check_item_exists('title')
@@ -101,15 +101,21 @@ class RSSFeed:
         try:
             if len(passed_string) > 0:
                 return (PunktWordTokenizer().tokenize(passed_string))
+            else:
+                return False
         except:
             print "Unable to tokenize into sentences"
+            return False
 
     def tokenize_by_sentence(self, passed_string):
         try:
             if len(passed_string) > 0:
                 return (PunktSentenceTokenizer().tokenize(passed_string))
+            else:
+                return None
         except:
             print "Unable to tokenize into sentences"
+            return None
 
     def count_usage(self, word_list):
         """

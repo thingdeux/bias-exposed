@@ -38,7 +38,7 @@ Plan for finding the same story between sources. Matching will occur in 4 stages
     [Each Match gets 6 points]
     Stage 3: Match exact sentences
 
-    [Each Match gets 3 points]
+    [Each Match gets 1 points]
     Stage 4: Token word match on the body of the story for the most recurring words.
 
 

@@ -18,20 +18,23 @@ app.config_from_object('django.conf:settings')
 # app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
-
 """
 Celery Tasks
 Each task will spin off it's own celery process
 """
+
+
 # Task for crawling/processing 1 RSS Feed
 @shared_task
 def queueFeed(feed_name):
     return analyze_feed(feed_name)
 
+
 # Task for crawling/processing all RSS Feeds
 @shared_task
 def crawl_all_feeds():
     return analyze_all_feeds()
+
 
 # Task for analyzing one feed this will check every feed item
 # In the feed and try to find like items amongst the other feeds
@@ -45,3 +48,7 @@ def process_feed(feed_name):
         if feeds.ready() and main_feed.ready():
             processing = False
 
+
+@shared_task
+def compare_tests():
+    return [queueFeed("AP"), queueFeed("NPR"), queueFeed("FoxNews"), queueFeed('HuffingtonPost')]

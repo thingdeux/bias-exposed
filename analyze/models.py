@@ -108,24 +108,91 @@ def get_parse_rule(feed_name):
 
 
 def compare_feed(main_feed, all_feeds):
-    # r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
-    match_count = 0
+    def stage_one(main_title, other_title):
+        match_score = 0
+        try:
+            for word in main_title:
+                if word in other_title:
+                    match_score += 10
+        except:
+            pass
+        return match_score
 
-    # Iterate over the main_feeds irticles one at al time
+    def stage_two(main_quotes, other_quotes):
+        """
+        Stage one article comparison, check to see if there article
+        shared quotes between the two articles
+        """
+        match_score = 0
+        # Check to see if each quote in the current article is in another_feeds
+        # Quote list
+        try:
+            for quote in main_quotes:
+                if quote in other_quotes['quotes']:
+                    match_score += 20
+                    print quote
+        except:
+            pass
+        return match_score
+
+    def stage_three(main_sentences, other_sentences):
+        match_score = 0
+        try:
+            for main_sentence in main_sentences:
+                if main_sentence in other_sentences:
+                    match_score += 6
+        except:
+            pass
+        return match_score
+
+    def stage_four(main_body_tokens, other_body_tokens):
+        match_score = 0
+        try:
+            for token in main_body_tokens:
+                if token in other_body_tokens:
+                    match_score += .5
+        except:
+            pass
+        return match_score
+
+    match_table = {}
+
+    # Iterate over the main_feeds articles one at a time
     for main_feed_item in main_feed.feed_items:
-        # Look at all of the feeds in the all_feeds object
+        print ("Checking: " + str(main_feed_item['title']))
+        # Iterate over each RSSFeed Object in the all_feeds list
         for rss_feed in all_feeds:
+            # Make sure to skip the RSSFeed Obj that equals main_feed
             if main_feed.source is not rss_feed.source:
                 for other_feed_item in rss_feed.feed_items:
-                    # Check to see if each quote in the current article is in another_feeds            
-                    # Quote list
+                    final_match_score = 0
                     try:
-                        for quote in main_feed_item['quotes']:
-                            if quote in other_feed_item['quotes']:
-                                match_count += 10
+                        final_match_score = stage_one(
+                            main_feed_item['quotes'], other_feed_item['quotes'])
                     except:
                         pass
-    return (match_count)
+
+                    try:
+                        final_match_score = final_match_score + stage_two(
+                            main_feed_item['tokenized_title'], other_feed_item['tokenized_title'])
+                    except:
+                        pass
+
+                    try:
+                        final_match_score = final_match_score + stage_three(
+                            main_feed_item['sentences'], other_feed_item['sentences'])
+                    except:
+                        pass
+
+                    try:
+                        final_match_score = final_match_score + stage_four(
+                            main_feed_item['tokenized_body'], other_feed_item['tokenized_body'])
+                    except:
+                        pass
+                    if final_match_score > 40:
+                        print ("\tScore for: " + other_feed_item['title'] + " " + str(final_match_score))
+
+    return (match_table)
 
 
 def test_redis():

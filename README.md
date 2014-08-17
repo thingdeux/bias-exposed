@@ -5,6 +5,7 @@ A website that will take a look at the way news networks separately report top h
 #### Tech ####
 * Django
 * Celery
+* Redis
 * BeautifulSoup
 * feedparser
 * nltk (natural language toolkit)
