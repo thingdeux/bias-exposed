@@ -19,7 +19,7 @@ class RSSFeed:
             # Parse the RSS Feed
             feed = feedparser.parse(self.feed_url)
             raw_feed_items = [a_feed for a_feed in feed['items']]
-            self.feed_title = str(feed['channel']['title'])
+            self.feed_title = feed['channel']['title'].lower()
             self.source = source_name
             self.feed_items = self.build_feed_list(raw_feed_items)
         except Exception as err:
@@ -58,11 +58,11 @@ class RSSFeed:
                     raw_html = self.get_http_content(feed_item['link'])
                     story = {
                         'id': count,
-                        'title': feed_item['title'],
-                        'tokenized_title': self.tokenize_string(
-                            feed_item['title']),
+                        'title': feed_item['title'].lower(),
+                        'tokenized_title': self.tokenize_title(
+                            feed_item['title'].lower()),
                         'link': feed_item['link'],
-                        'raw_html': raw_html,
+                        'raw_html': raw_html.lower(),
                         'quotes': self.build_quote_list(raw_html)
                         }
                     # If there's a published date add it.
@@ -104,7 +104,16 @@ class RSSFeed:
             else:
                 return False
         except:
-            print "Unable to tokenize into sentences"
+            print "Unable to tokenize"
+            return False
+
+    def tokenize_title(self, passed_title):
+        try:
+            if len(passed_title) > 1:
+                return ([word.lower() for word in passed_title.split(' ')
+                        if word not in get_stop_words()])
+        except:
+            print "Unable to tokenize title"
             return False
 
     def tokenize_by_sentence(self, passed_string):
@@ -154,7 +163,7 @@ class RSSFeed:
             if count % 2 == 0 or count == 0:
                 try:
                     quotes.append(string[quotePositions[count] + 1:
-                                         quotePositions[count + 1]])
+                                         quotePositions[count + 1]].lower())
                 except Exception as err:
                     print err
                     pass
@@ -206,6 +215,6 @@ def get_stop_words():
                      'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too',
                      'very', 's', 't', 'can', 'will', 'just', 'don', 'should',
                      'now', 'said', 'the', 'said', 'the', 'could', 'during',
-                     ',', 'also'])
+                     ',', 'also', "'"])
 
     return stopWords

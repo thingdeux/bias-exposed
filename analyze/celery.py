@@ -51,4 +51,4 @@ def process_feed(feed_name):
 
 @shared_task
 def compare_tests():
-    return [queueFeed("AP"), queueFeed("NPR"), queueFeed("FoxNews"), queueFeed('HuffingtonPost')]
+    return [queueFeed("NYT"), queueFeed("NPR"), queueFeed("FoxNews"), queueFeed('Reuters')]

@@ -124,25 +124,40 @@ def compare_feed(main_feed, all_feeds):
         shared quotes between the two articles
         """
         match_score = 0
+        reasons = {'quotes': []}
         # Check to see if each quote in the current article is in another_feeds
         # Quote list
         try:
             for quote in main_quotes:
                 if quote in other_quotes['quotes']:
                     match_score += 20
-                    print quote
+                    reasons['quotes'].append(quote)
         except:
             pass
+
+        if len(reasons['quotes']) >= 1:
+            print ("\tQuote match")
+            for line in reasons['quotes']:
+                print "\t\t" + line
         return match_score
 
     def stage_three(main_sentences, other_sentences):
         match_score = 0
+        reasons = {'sentences': []}
         try:
             for main_sentence in main_sentences:
-                if main_sentence in other_sentences:
-                    match_score += 6
+                # Make sure the sentence is at least 3 words long
+                # Should catch false positives like 'Gen.' or 'Sen.'
+                if len(main_sentence.split(' ')) > 3:
+                    if main_sentence in other_sentences:
+                        match_score += 6
+                        reasons['sentences'].append(main_sentence)
         except:
             pass
+        if len(reasons['sentences']) >= 1:
+            print ("\tSentences match")
+            for line in reasons['sentences']:
+                print "\t\t" + line
         return match_score
 
     def stage_four(main_body_tokens, other_body_tokens):
@@ -150,7 +165,7 @@ def compare_feed(main_feed, all_feeds):
         try:
             for token in main_body_tokens:
                 if token in other_body_tokens:
-                    match_score += .5
+                    match_score += 1
         except:
             pass
         return match_score
@@ -159,7 +174,7 @@ def compare_feed(main_feed, all_feeds):
 
     # Iterate over the main_feeds articles one at a time
     for main_feed_item in main_feed.feed_items:
-        print ("Checking: " + str(main_feed_item['title']))
+        print ("[" + main_feed.source + "]" + "Checking: " + main_feed_item['title'])
         # Iterate over each RSSFeed Object in the all_feeds list
         for rss_feed in all_feeds:
             # Make sure to skip the RSSFeed Obj that equals main_feed
@@ -168,13 +183,13 @@ def compare_feed(main_feed, all_feeds):
                     final_match_score = 0
                     try:
                         final_match_score = stage_one(
-                            main_feed_item['quotes'], other_feed_item['quotes'])
+                            main_feed_item['tokenized_title'], other_feed_item['tokenized_title'])
                     except:
                         pass
 
                     try:
                         final_match_score = final_match_score + stage_two(
-                            main_feed_item['tokenized_title'], other_feed_item['tokenized_title'])
+                            main_feed_item['quotes'], other_feed_item['quotes'])
                     except:
                         pass
 
@@ -189,8 +204,9 @@ def compare_feed(main_feed, all_feeds):
                             main_feed_item['tokenized_body'], other_feed_item['tokenized_body'])
                     except:
                         pass
-                    if final_match_score > 40:
-                        print ("\tScore for: " + other_feed_item['title'] + " " + str(final_match_score))
+                    if final_match_score > 65:
+                        print ("\t" + str(final_match_score) + " Score for: " + other_feed_item['title'] + " " +
+                               "    " + "(" + rss_feed.source + ")")
 
     return (match_table)
 
