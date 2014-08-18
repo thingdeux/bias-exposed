@@ -4,6 +4,7 @@ from rssfeed import RSSFeed
 from django.conf import settings
 import redis
 
+
 class FeedSource(models.Model):
     source = models.CharField("News Source", max_length=128, unique=True)
     rss_feed_url = models.URLField("RSS Feed URL", max_length=2000)
@@ -107,7 +108,7 @@ def get_parse_rule(feed_name):
         return None
 
 
-def compare_feed(main_feed, all_feeds):
+def compare_feed_to_others(main_feed, all_feeds, dictionary):
     def stage_one(main_title, other_title):
         match_score = 0
         try:
@@ -116,8 +117,6 @@ def compare_feed(main_feed, all_feeds):
                     match_score += 15
         except:
             pass
-        if match_score > 0:
-            print ("Title: " + str(match_score) + " "),
         return match_score
 
     def stage_two(main_quotes, other_quotes):
@@ -134,8 +133,6 @@ def compare_feed(main_feed, all_feeds):
                     match_score += 30
         except:
             pass
-        if match_score > 0:
-            print ("Quotes: " + str(match_score) + " "),
         return match_score
 
     def stage_three(main_sentences, other_sentences):
@@ -149,8 +146,6 @@ def compare_feed(main_feed, all_feeds):
                         match_score += 15
         except:
             pass
-        if match_score > 0:
-            print ("Sentences: " + str(match_score) + " "),
         return match_score
 
     def stage_four(main_body_tokens, other_body_tokens):
@@ -161,53 +156,88 @@ def compare_feed(main_feed, all_feeds):
                     match_score += .25
         except:
             pass
-        if match_score > 0:
-            print ("Body: " + str(match_score) + " "),
         return match_score
 
-    match_table = {}
+    def compare_to_other_feed_items():
+        # Iterate over the main_feeds articles one at a time
+        for main_feed_item in main_feed.feed_items:
+            # Iterate over each RSSFeed Object in the all_feeds list
+            for rss_feed in all_feeds:
+                try:
+                    # Make sure to skip the RSSFeed Obj that equals main_feed
+                    if main_feed.source is not rss_feed.source:
+                        for other_feed_item in rss_feed.feed_items:
+                            match_score = {}
+                            # Try to find related articles across feeds using
+                            # The algorithm defined in 'the_plan.txt'
+                            # Stage 1 matches based on title tokens
+                            # Stage 2 matches on matching quotes
+                            # Stage 3 matches on matching sentences
+                            # Stage 4 matches on tokens from article content
+                            # The final score is kept along with the reasons
+                            # For the rating (passed along as a dictionary)
+                            try:
+                                match_score['title'] = stage_one(
+                                    main_feed_item['tokenized_title'],
+                                    other_feed_item['tokenized_title'])
+                            except:
+                                pass
 
-    # Iterate over the main_feeds articles one at a time
-    for main_feed_item in main_feed.feed_items:
-        print ("[" + main_feed.source + "]" + "Checking: " + main_feed_item['title'])
-        # Iterate over each RSSFeed Object in the all_feeds list
-        for rss_feed in all_feeds:
-            # Make sure to skip the RSSFeed Obj that equals main_feed
-            if main_feed.source is not rss_feed.source:
-                for other_feed_item in rss_feed.feed_items:
-                    final_match_score = 0
-                    try:
-                        final_match_score = stage_one(
-                            main_feed_item['tokenized_title'], other_feed_item['tokenized_title'])
-                    except:
-                        pass
+                            try:
+                                match_score['quotes'] = stage_two(
+                                    main_feed_item['quotes'],
+                                    other_feed_item['quotes'])
+                            except:
+                                pass
 
-                    try:
-                        final_match_score = final_match_score + stage_two(
-                            main_feed_item['quotes'], other_feed_item['quotes'])
-                    except:
-                        pass
+                            try:
+                                match_score['sentences'] = stage_three(
+                                    main_feed_item['sentences'],
+                                    other_feed_item['sentences'])
+                            except:
+                                pass
 
-                    try:
-                        final_match_score = final_match_score + stage_three(
-                            main_feed_item['sentences'], other_feed_item['sentences'])
-                    except:
-                        pass
+                            try:
+                                match_score['body'] = stage_four(
+                                    main_feed_item['tokenized_body'],
+                                    other_feed_item['tokenized_body'])
+                            except:
+                                pass
 
-                    try:
-                        final_match_score = final_match_score + stage_four(
-                            main_feed_item['tokenized_body'], other_feed_item['tokenized_body'])
-                    except:
-                        pass
-                    if final_match_score > 40:
-                        print ("\t" + str(final_match_score) + " Score for: " + other_feed_item['title'] + " " +
-                               "    " + "(" + rss_feed.source + ")")
-                    else:
-                        print (" ")
+                            final_match_score = 0
+                            for score in match_score.keys():
+                                final_match_score += match_score[score]
 
-    return (match_table)
+                            # The key used for the matching dictionary is a
+                            # String composed of 'Feed Source' followed by a
+                            # - and the feed ID number
+                            if final_match_score >= 40:
+                                main_dict_key = str(main_feed.source) + "-" + str(main_feed_item['id'])
+                                other_dict_key = str(rss_feed.source) + "-" + str(other_feed_item['id'])
+                                match = [
+                                    other_dict_key,
+                                    final_match_score,
+                                    match_score
+                                ]
+
+                                try:
+                                    print ("Adding: " + main_dict_key + " > " + other_dict_key + str(match))
+                                    # Create/append to the final match table
+                                    dictionary[main_dict_key].append(match)
+                                except Exception as err:
+                                    print ("Creating: " + main_dict_key + " > " + other_dict_key + str(match))
+                                    dictionary[main_dict_key] = [match]
+                                    print str(err)
+
+                except Exception as err:
+                    print (err)
+                    pass
+
+    if main_feed is not None and all_feeds is not None:
+        compare_to_other_feed_items()
 
 
 def test_redis():
-    r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
+    r = redis.StrictRedis(host=settings.REDIS_HOST,
+                          port=settings.REDIS_PORT, db=0)
     return r

@@ -7,7 +7,7 @@ from django.conf import settings
 
 # set the default Django settings module for celery
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bias_exposed.settings')
-from analyze.models import analyze_feed, FeedSource
+from analyze.models import analyze_feed, FeedSource, compare_feed_to_others
 
 app = Celery('analyze')
 
@@ -44,22 +44,24 @@ def queueFeed(feed_name):
     else:
         return None
 
+
 @app.task
 def check_all_feeds(allfeeds):
-    for thing in allfeeds:
+    potential_matches = {}
+    for feed in allfeeds:
         try:
-            print ("Analyzing: " + str(thing.source))
-        except:
-            print "No Dice"
+            compare_feed_to_others(feed, allfeeds, potential_matches)
+        except Exception as err:
+            print ("Unable to process feed: " + feed.source + "  " + str(err))
 
-    return allfeeds
+    return ([allfeeds, potential_matches])
 
 
 @app.task
 def compare_tests():
     callback = check_all_feeds.s()
     head = [queueFeed.s(feed.source) for feed in FeedSource.objects.filter(
-            parserule__caused_error=False) if feed is not None]
+            parserule__caused_error=False)]
     result = chord(head)(callback)
 
     return result

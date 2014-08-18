@@ -7,8 +7,15 @@ If there are any issues reading feed lists or performing any of the stages - fla
         Connection reset or time out --- wait and restart check in 10 mins (CNN with > 40 items)
 
 
-[AP-0] ---  [BBC-0, count]
-            [NYT-100, count]
+[AP-0] ---  [BBC-0, count, reasons]
+            [NYT-100, count, reasons]
+
+
+[AP-4] -- [BBC-0]
+
+
+[BBC-0] -- [AP-0, count, reasons],
+           [NYT-4, count, reasons]
 
 
 If sentence matches are too high - it's probably just borrowed from the AP
