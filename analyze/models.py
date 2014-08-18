@@ -113,9 +113,11 @@ def compare_feed(main_feed, all_feeds):
         try:
             for word in main_title:
                 if word in other_title:
-                    match_score += 10
+                    match_score += 15
         except:
             pass
+        if match_score > 0:
+            print ("Title: " + str(match_score) + " "),
         return match_score
 
     def stage_two(main_quotes, other_quotes):
@@ -124,40 +126,31 @@ def compare_feed(main_feed, all_feeds):
         shared quotes between the two articles
         """
         match_score = 0
-        reasons = {'quotes': []}
         # Check to see if each quote in the current article is in another_feeds
         # Quote list
         try:
             for quote in main_quotes:
-                if quote in other_quotes['quotes']:
-                    match_score += 20
-                    reasons['quotes'].append(quote)
+                if quote in other_quotes:
+                    match_score += 30
         except:
             pass
-
-        if len(reasons['quotes']) >= 1:
-            print ("\tQuote match")
-            for line in reasons['quotes']:
-                print "\t\t" + line
+        if match_score > 0:
+            print ("Quotes: " + str(match_score) + " "),
         return match_score
 
     def stage_three(main_sentences, other_sentences):
         match_score = 0
-        reasons = {'sentences': []}
         try:
             for main_sentence in main_sentences:
                 # Make sure the sentence is at least 3 words long
                 # Should catch false positives like 'Gen.' or 'Sen.'
                 if len(main_sentence.split(' ')) > 3:
                     if main_sentence in other_sentences:
-                        match_score += 6
-                        reasons['sentences'].append(main_sentence)
+                        match_score += 15
         except:
             pass
-        if len(reasons['sentences']) >= 1:
-            print ("\tSentences match")
-            for line in reasons['sentences']:
-                print "\t\t" + line
+        if match_score > 0:
+            print ("Sentences: " + str(match_score) + " "),
         return match_score
 
     def stage_four(main_body_tokens, other_body_tokens):
@@ -165,9 +158,11 @@ def compare_feed(main_feed, all_feeds):
         try:
             for token in main_body_tokens:
                 if token in other_body_tokens:
-                    match_score += 1
+                    match_score += .25
         except:
             pass
+        if match_score > 0:
+            print ("Body: " + str(match_score) + " "),
         return match_score
 
     match_table = {}
@@ -204,9 +199,11 @@ def compare_feed(main_feed, all_feeds):
                             main_feed_item['tokenized_body'], other_feed_item['tokenized_body'])
                     except:
                         pass
-                    if final_match_score > 65:
+                    if final_match_score > 40:
                         print ("\t" + str(final_match_score) + " Score for: " + other_feed_item['title'] + " " +
                                "    " + "(" + rss_feed.source + ")")
+                    else:
+                        print (" ")
 
     return (match_table)
 

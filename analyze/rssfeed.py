@@ -102,10 +102,10 @@ class RSSFeed:
             if len(passed_string) > 0:
                 return (PunktWordTokenizer().tokenize(passed_string))
             else:
-                return False
+                return None
         except:
             print "Unable to tokenize"
-            return False
+            return None
 
     def tokenize_title(self, passed_title):
         try:
@@ -114,7 +114,7 @@ class RSSFeed:
                         if word not in get_stop_words()])
         except:
             print "Unable to tokenize title"
-            return False
+            return None
 
     def tokenize_by_sentence(self, passed_string):
         try:
@@ -164,8 +164,7 @@ class RSSFeed:
                 try:
                     quotes.append(string[quotePositions[count] + 1:
                                          quotePositions[count + 1]].lower())
-                except Exception as err:
-                    print err
+                except:
                     pass
         if len(quotes) >= 1:
             return quotes
@@ -192,7 +191,6 @@ class RSSFeed:
     def get_article_dom_id(self, string):
         from models import get_parse_rule
         return (get_parse_rule(string))
-
 
 # Common english words that should be excluded from the analysis
 def get_stop_words():

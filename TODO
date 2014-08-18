@@ -5,3 +5,10 @@ Remove sentences from tokenized words
 If there are any issues reading feed lists or performing any of the stages - flag the feed.
     [Failure Conditions]
         Connection reset or time out --- wait and restart check in 10 mins (CNN with > 40 items)
+
+
+[AP-0] ---  [BBC-0, count]
+            [NYT-100, count]
+
+
+If sentence matches are too high - it's probably just borrowed from the AP

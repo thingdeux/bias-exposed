@@ -85,10 +85,11 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR + '/templates/')
 )
 
+CELERY_CHORD_PROPAGATES = True
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = "America/Los_Angeles"
 # Only run 4 threads total
-CELERYD_CONCURRENCY = 4
+CELERYD_CONCURRENCY = 6
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 BROKER_URL = 'redis://localhost:6379/0'
 
