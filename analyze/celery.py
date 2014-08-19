@@ -59,15 +59,30 @@ def check_all_feeds(allfeeds):
     # Hashes of source-id at index 0 and potential matches at 1
     # Potential Match Index:
     for key, matches in potential_matches.iteritems():
-        story = PotentialStory(title="TBD")
+        story = PotentialStory(title=str(key) + " - TBD")
         story.save()
 
+        bulk_insert_list = []
         for match in matches:
             try:
-                print str(match['reasons'])
-            except Exception as err:
-                print str(err)
+                # final_score | reasons | key | feed_obj | isProcessed | source
+                new_record, exists = PotentialArticle.objects.get_or_create(
+                    potentialstory=story, source=match['source'],
+                    title=match['feed_item_obj']['title'],
+                    url=match['feed_item_obj']['link'],
+                    final_match_score=match['final_score'],
+                    # title | quotes | sentences | body
+                    match_title=match['reasons']['title'],
+                    match_body=match['reasons']['body'],
+                    match_quotes=match['reasons']['quotes'],
+                    match_sentences=match['reasons']['sentences'],
+                    match_key=match['key'])
+                if not exists:
+                    bulk_insert_list.append(new_record)
 
+            except Exception as err:
+                print "Can't create DB record: " + str(err)
+        PotentialArticle.objects.bulk_create(bulk_insert_list)
     return ([allfeeds, potential_matches])
 
 

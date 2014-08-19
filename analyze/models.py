@@ -9,6 +9,9 @@ class PotentialStory(models.Model):
     title = models.CharField(max_length=512, default="")
     to_publish = models.BooleanField("Publish?", default=False)
 
+    def __unicode__(self):
+        return self.title
+
 
 class PotentialArticle(models.Model):
     potentialstory = models.ForeignKey(PotentialStory)
@@ -17,13 +20,16 @@ class PotentialArticle(models.Model):
     title = models.CharField("Title", max_length=512)
     # RSS Feed URL
     url = models.URLField("URL", max_length=2000)
-    final_match_score = models.PositiveIntegerField("Match Score", default=0)
+    final_match_score = models.PositiveIntegerField("Total Match Score",
+                                                    default=0)
+    match_title = models.PositiveIntegerField("Title Match", default=0)
+    match_body = models.PositiveIntegerField("Body Match", default=0)
+    match_quotes = models.PositiveIntegerField("Quote Match", default=0)
+    match_sentences = models.PositiveIntegerField("Sentence Match", default=0)
     match_key = models.CharField(max_length=10)
 
-
-
     def __unicode__(self):
-        return (self.source + ": " + str(self.final_match))
+        return (self.source + ": " + str(self.final_match_score))
 
 
 class FeedSource(models.Model):
@@ -241,7 +247,8 @@ def compare_feed_to_others(main_feed, all_feeds, dictionary):
                                     other_feed_item['id'])
                                 match = {
                                     # Feed Object
-                                    'feed_obj': other_feed_item,
+                                    'feed_item_obj': other_feed_item,
+                                    'source': rss_feed.source,
                                     'key': other_dict_key,
                                     # Int of the total score of a feed match
                                     'final_score': final_match_score,
@@ -263,8 +270,8 @@ def compare_feed_to_others(main_feed, all_feeds, dictionary):
                                     except Exception as err:
                                         print ("Can't create match: " + err)
 
-                except Exception as err:
-                    print (err)
+                except:
+                    # print (err)
                     pass
 
     if main_feed is not None and all_feeds is not None:

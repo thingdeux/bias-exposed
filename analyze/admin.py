@@ -20,9 +20,13 @@ class FeedSourceAdmin(admin.ModelAdmin):
 
 
 class PotentialArticleInline(admin.StackedInline):
+    verbose_name = "Potential Article Match"
+    verbose_name_plural = "Potential Article Matches"
     model = PotentialArticle
-    fields = ([('source', 'title', 'url'), 'final_match_score', 'to_publish'])    
-    readonly_fields = (['source', 'title', 'url', 'final_match'])
+    fields = ([('title', 'url'),
+               ('match_title', 'match_body',
+                'match_quotes', 'match_sentences'), 'match_key'])
+    readonly_fields = (['source', 'title', 'url', 'final_match_score'])
     extra = 0
 
 
