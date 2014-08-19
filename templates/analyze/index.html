@@ -4,9 +4,11 @@
     </head>
 
     <body>
-        <div id = "RSS Sources">
-            {% for feed in sources %}
-                {{ feed }}<br>
+        <div id = "RSS Sources">            
+            {% for name, count in Potentials %}
+                {% if count > 2%}                            
+                    {{name}}: {{ count }} <br>                
+                {% endif %}
             {% endfor %}
         </div>
     </body>

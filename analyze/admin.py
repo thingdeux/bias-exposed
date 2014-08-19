@@ -22,6 +22,7 @@ class FeedSourceAdmin(admin.ModelAdmin):
 class PotentialArticleInline(admin.StackedInline):
     verbose_name = "Potential Article Match"
     verbose_name_plural = "Potential Article Matches"
+    ordering = [('-final_match_score')]
     model = PotentialArticle
     fields = ([('title', 'url'),
                ('match_title', 'match_body',
