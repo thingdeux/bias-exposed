@@ -2,12 +2,13 @@ from __future__ import absolute_import
 
 import os
 
-from celery import Celery, chord, signature
+from celery import Celery, chord
 from django.conf import settings
 
 # set the default Django settings module for celery
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bias_exposed.settings')
 from analyze.models import analyze_feed, FeedSource, compare_feed_to_others
+from analyze.models import PotentialStory, PotentialArticle
 
 app = Celery('analyze')
 
@@ -53,6 +54,19 @@ def check_all_feeds(allfeeds):
             compare_feed_to_others(feed, allfeeds, potential_matches)
         except Exception as err:
             print ("Unable to process feed: " + feed.source + "  " + str(err))
+
+    # Iterate over the keys in the dictionary which will be
+    # Hashes of source-id at index 0 and potential matches at 1
+    # Potential Match Index:
+    for key, matches in potential_matches.iteritems():
+        story = PotentialStory(title="TBD")
+        story.save()
+
+        for match in matches:
+            try:
+                print str(match['reasons'])
+            except Exception as err:
+                print str(err)
 
     return ([allfeeds, potential_matches])
 

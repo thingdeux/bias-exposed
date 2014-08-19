@@ -55,3 +55,16 @@ Some things to try:
 [DOM Discovery]
     Feeds will keep a table of DOM ID's for article body text.
     If an ID is no longer valid the feed will be flagged and not used until I correct it.
+
+celery -A analyze worker -l info
+celery -A flower
+
+[AP-0] ---  [BBC-0, count, reasons]
+            [NYT-100, count, reasons]
+
+
+[AP-4] -- [BBC-0]
+
+
+[BBC-0] -- [AP-0, count, reasons],
+           [NYT-4, count, reasons]

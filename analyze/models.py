@@ -1,8 +1,29 @@
 from django.db import models
-from feed.models import Story, Feed, Word
+# from feed.models import Story, Feed, Word
 from rssfeed import RSSFeed
 from django.conf import settings
-import redis
+
+
+class PotentialStory(models.Model):
+    # Title of the major news story
+    title = models.CharField(max_length=512, default="")
+    to_publish = models.BooleanField("Publish?", default=False)
+
+
+class PotentialArticle(models.Model):
+    potentialstory = models.ForeignKey(PotentialStory)
+    source = models.CharField("Feed Source", max_length=50)
+    # Feed Title
+    title = models.CharField("Title", max_length=512)
+    # RSS Feed URL
+    url = models.URLField("URL", max_length=2000)
+    final_match_score = models.PositiveIntegerField("Match Score", default=0)
+    match_key = models.CharField(max_length=10)
+
+
+
+    def __unicode__(self):
+        return (self.source + ": " + str(self.final_match))
 
 
 class FeedSource(models.Model):
@@ -53,16 +74,16 @@ def create_initial_rss_feeds():
     """
     RSS_FEEDS = [
         # Breaking PEP8 for readability
-        ["http://hosted.ap.org/lineups/POLITICSHEADS.rss?SITE=AP&SECTION=HOME", "AP"],
-        ["http://www.huffingtonpost.com/feeds/verticals/politics/news.xml", "HuffingtonPost"],
+        ["http://hosted.ap.org/lineups/POLITICSHEADS.rss?SITE=AP&SECTION=HOME", "AP"],  # noqa
+        ["http://www.huffingtonpost.com/feeds/verticals/politics/news.xml", "HuffingtonPost"],  # noqa
         ["http://feeds.foxnews.com/foxnews/politics", "FoxNews"],
         ["http://rss.cnn.com/rss/cnn_allpolitics.rss", "CNN"],
-        ["http://feeds.reuters.com/Reuters/PoliticsNews?format=xml", "Reuters"],
+        ["http://feeds.reuters.com/Reuters/PoliticsNews?format=xml", "Reuters"],  # noqa
         ["http://www.npr.org/rss/rss.php?id=1014", "NPR"],
         ["http://rss.nytimes.com/services/xml/rss/nyt/Politics.xml", "NYT"],
         ["http://feeds.nbcnews.com/feeds/topstories", "NBC"],
-        ["http://feeds.washingtonpost.com/rss/rss_election-2012", "WashingtonPost"],
-        ["http://feeds.theguardian.com/theguardian/politics/rss", "TheGuardian"],
+        ["http://feeds.washingtonpost.com/rss/rss_election-2012", "WashingtonPost"],  # noqa
+        ["http://feeds.theguardian.com/theguardian/politics/rss", "TheGuardian"],  # noqa
         ["http://feeds.abcnews.com/abcnews/politicsheadlines", "ABC"],
         ["http://feeds.bbci.co.uk/news/politics/rss.xml", "BBC"]
     ]
@@ -79,7 +100,7 @@ def create_initial_parse_rules():
     """
     PARSE_RULES = [
         [FeedSource.objects.get(source="AP"), ".entry-content"],
-        [FeedSource.objects.get(source="HuffingtonPost"), "#mainentrycontent > p"],
+        [FeedSource.objects.get(source="HuffingtonPost"), "#mainentrycontent > p"],  # noqa
         [FeedSource.objects.get(source="FoxNews"), "article"],
         [FeedSource.objects.get(source="CNN"), ".cnn_storypgraphtxt"],
         [FeedSource.objects.get(source="Reuters"), "#articleText"],
@@ -212,22 +233,35 @@ def compare_feed_to_others(main_feed, all_feeds, dictionary):
                             # String composed of 'Feed Source' followed by a
                             # - and the feed ID number
                             if final_match_score >= 40:
-                                main_dict_key = str(main_feed.source) + "-" + str(main_feed_item['id'])
-                                other_dict_key = str(rss_feed.source) + "-" + str(other_feed_item['id'])
-                                match = [
-                                    other_dict_key,
-                                    final_match_score,
-                                    match_score
-                                ]
+                                main_dict_key = str(
+                                    main_feed.source) + "-" + str(
+                                    main_feed_item['id'])
+                                other_dict_key = str(
+                                    rss_feed.source) + "-" + str(
+                                    other_feed_item['id'])
+                                match = {
+                                    # Feed Object
+                                    'feed_obj': other_feed_item,
+                                    'key': other_dict_key,
+                                    # Int of the total score of a feed match
+                                    'final_score': final_match_score,
+                                    # Dictionary with the broken down score of
+                                    # The reason each match was made.
+                                    'reasons': match_score,
+                                    # Used to determine if the feed has been
+                                    # Processed when creating a model entry.
+                                    'isProcessed': False
+                                }
 
                                 try:
-                                    print ("Adding: " + main_dict_key + " > " + other_dict_key + str(match))
-                                    # Create/append to the final match table
+                                    # Append entry to final match table
                                     dictionary[main_dict_key].append(match)
-                                except Exception as err:
-                                    print ("Creating: " + main_dict_key + " > " + other_dict_key + str(match))
-                                    dictionary[main_dict_key] = [match]
-                                    print str(err)
+                                except:
+                                    try:
+                                        # Create entry for final match table
+                                        dictionary[main_dict_key] = [match]
+                                    except Exception as err:
+                                        print ("Can't create match: " + err)
 
                 except Exception as err:
                     print (err)
@@ -235,9 +269,3 @@ def compare_feed_to_others(main_feed, all_feeds, dictionary):
 
     if main_feed is not None and all_feeds is not None:
         compare_to_other_feed_items()
-
-
-def test_redis():
-    r = redis.StrictRedis(host=settings.REDIS_HOST,
-                          port=settings.REDIS_PORT, db=0)
-    return r
