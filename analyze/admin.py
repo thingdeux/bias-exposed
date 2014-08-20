@@ -22,12 +22,16 @@ class FeedSourceAdmin(admin.ModelAdmin):
 class PotentialArticleInline(admin.StackedInline):
     verbose_name = "Potential Article Match"
     verbose_name_plural = "Potential Article Matches"
-    ordering = [('-final_match_score')]
+    ordering = ['source', '-final_match_score']
     model = PotentialArticle
-    fields = ([('title', 'url'),
+    """ --For Debug
+    fields = (['title', 'url',
                ('match_title', 'match_body',
                 'match_quotes', 'match_sentences'), 'match_key'])
-    readonly_fields = (['source', 'title', 'url', 'final_match_score'])
+    """
+    fields = (['title', 'url'])
+
+    readonly_fields = (['source', 'title', 'final_match_score', 'url'])
     extra = 0
 
 
@@ -37,5 +41,10 @@ class PotentialStoryAdmin(admin.ModelAdmin):
     list_display = (['title', 'to_publish'])
 
 
+class PotentialArticleAdmin(admin.ModelAdmin):
+    fields = (['potentialstory', 'title'])
+
+
 admin.site.register(FeedSource, FeedSourceAdmin)
 admin.site.register(PotentialStory, PotentialStoryAdmin)
+admin.site.register(PotentialArticle, PotentialArticleAdmin)

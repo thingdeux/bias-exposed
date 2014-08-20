@@ -5,3 +5,5 @@ If there are any issues reading feed lists or performing any of the stages - fla
         Connection reset or time out --- wait and restart check in 10 mins (CNN with > 40 items)
 
 If sentence matches are too high - it's probably just borrowed from the AP
+
+Write auth checks into potential page.

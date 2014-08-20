@@ -6,8 +6,9 @@ from django.conf import settings
 
 class PotentialStory(models.Model):
     # Title of the major news story
-    title = models.CharField(max_length=512, default="")
+    title = models.TextField(max_length=1024, default="")
     to_publish = models.BooleanField("Publish?", default=False)
+    first_key = models.CharField(max_length=50)
 
     def __unicode__(self):
         return self.title
@@ -26,7 +27,7 @@ class PotentialArticle(models.Model):
     match_body = models.PositiveIntegerField("Body Match", default=0)
     match_quotes = models.PositiveIntegerField("Quote Match", default=0)
     match_sentences = models.PositiveIntegerField("Sentence Match", default=0)
-    match_key = models.CharField(max_length=10)
+    match_key = models.CharField(max_length=50)
 
     def __unicode__(self):
         return (self.source + ": " + str(self.final_match_score))
@@ -238,7 +239,7 @@ def compare_feed_to_others(main_feed, all_feeds, dictionary):
                             # The key used for the matching dictionary is a
                             # String composed of 'Feed Source' followed by a
                             # - and the feed ID number
-                            if final_match_score >= 40:
+                            if final_match_score >= 40 and match_score['title'] > 0:
                                 main_dict_key = str(
                                     main_feed.source) + "-" + str(
                                     main_feed_item['id'])
@@ -257,7 +258,8 @@ def compare_feed_to_others(main_feed, all_feeds, dictionary):
                                     'reasons': match_score,
                                     # Used to determine if the feed has been
                                     # Processed when creating a model entry.
-                                    'isProcessed': False
+                                    'isProcessed': False,
+                                    'title': main_feed_item['title']
                                 }
 
                                 try:
