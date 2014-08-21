@@ -14,6 +14,10 @@ class PotentialStory(models.Model):
         return self.title
 
 
+class PotentialWord(models.Model):
+    word = models.CharField(max_length=512, unique=True)
+
+
 class PotentialArticle(models.Model):
     potentialstory = models.ForeignKey(PotentialStory)
     source = models.CharField("Feed Source", max_length=50)
@@ -28,9 +32,16 @@ class PotentialArticle(models.Model):
     match_quotes = models.PositiveIntegerField("Quote Match", default=0)
     match_sentences = models.PositiveIntegerField("Sentence Match", default=0)
     match_key = models.CharField(max_length=50)
+    words = models.ManyToManyField(PotentialWord, through='WordDetail')
 
     def __unicode__(self):
         return (self.source + ": " + str(self.final_match_score))
+
+
+class WordDetail(models.Model):
+    potentialword = models.ForeignKey(PotentialWord)
+    potentialarticle = models.ForeignKey(PotentialArticle)
+    usage = models.PositiveIntegerField(default=1)
 
 
 class FeedSource(models.Model):
@@ -92,7 +103,8 @@ def create_initial_rss_feeds():
         ["http://feeds.washingtonpost.com/rss/rss_election-2012", "WashingtonPost"],  # noqa
         ["http://feeds.theguardian.com/theguardian/politics/rss", "TheGuardian"],  # noqa
         ["http://feeds.abcnews.com/abcnews/politicsheadlines", "ABC"],
-        ["http://feeds.bbci.co.uk/news/politics/rss.xml", "BBC"]
+        ["http://feeds.bbci.co.uk/news/politics/rss.xml", "BBC"],
+        ["http://america.aljazeera.com/content/ajam/articles.rss", "Aljazeera"]
     ]
     bulk_list = []
     for feed in RSS_FEEDS:
@@ -117,7 +129,8 @@ def create_initial_parse_rules():
         [FeedSource.objects.get(source="WashingtonPost"), "#article-body"],
         [FeedSource.objects.get(source="TheGuardian"), "#article-body-blocks"],
         [FeedSource.objects.get(source="ABC"), "#innerbody > div > p"],
-        [FeedSource.objects.get(source="BBC"), ".story-body > p"]
+        [FeedSource.objects.get(source="BBC"), ".story-body > p"],
+        [FeedSource.objects.get(source="Aljazeera"), ".text section > p"]
     ]
 
     bulk_list = []
@@ -259,7 +272,7 @@ def compare_feed_to_others(main_feed, all_feeds, dictionary):
                                     # Used to determine if the feed has been
                                     # Processed when creating a model entry.
                                     'isProcessed': False,
-                                    'title': main_feed_item['title']
+                                    'title': main_feed_item['title']                                    
                                 }
 
                                 try:

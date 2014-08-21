@@ -56,6 +56,7 @@ def check_all_feeds(allfeeds):
             print ("Unable to process feed: " + feed.source + "  " + str(err))
 
     # Delete any old feeds
+    PotentialArticle.objects.all().delete()
     PotentialStory.objects.all().delete()
     # Iterate over the keys in the dictionary which will be
     # Hashes of source-id at index 0 and potential matches at 1

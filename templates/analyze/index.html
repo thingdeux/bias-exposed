@@ -7,13 +7,21 @@
         <div id = "RSS Sources">            
             {% for story in stories %}
                 <h3>{{ story|title }}</h3>
-                {% for article in story.potentialarticle_set.all %}
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="{{article.url}}" target="_blank">{{ article.title |title }}</a> --                     
-                    <b>{{ article.source|title }}</b><br>
-                {% endfor %}                
+                <div style="margin-left: 50px">
+                    {% for article in story.potentialarticle_set.all %}                    
+                        <a href="{{article.url}}" target="_blank">{{ article.title |title|slice:":80" }}</a> --                     
+                        <b>{{ article.source|title }}</b><br>
+                        <div style="margin-left: 100px">
+                            {% for word in article.words.all %}
+                                {{ word.word }}: 
+                                {% for detail in article.worddetail_set.all %}
+                                    {{ detail.usage }}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
             {% endfor %}
-
 
         </div>        
     </body>
