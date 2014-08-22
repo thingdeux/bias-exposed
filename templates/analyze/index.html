@@ -1,28 +1,57 @@
-<html>
-    <head>
-        <title>Analyze Test Page</title>
-    </head>
+{% extends "analyze/base.html" %}
+{% load staticfiles %}
 
-    <body>
-        <div id = "RSS Sources">            
-            {% for story in stories %}
-                <h3>{{ story|title }}</h3>
-                <div style="margin-left: 50px">
-                    {% for article in story.potentialarticle_set.all %}                    
-                        <a href="{{article.url}}" target="_blank">{{ article.title |title|slice:":80" }}</a> --                     
-                        <b>{{ article.source|title }}</b><br>
-                        <div style="margin-left: 100px">
-                            {% for word in article.words.all %}
-                                {{ word.word }}: 
-                                {% for detail in article.worddetail_set.all %}
-                                    {{ detail.usage }}
-                                {% endfor %}
-                            {% endfor %}
+{% block extra_css %}
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+{% endblock %}
+
+
+{% block body %}     
+        <div class="row" id="analyze_container">
+            <div id = "potential_stories" class="text-center">
+                
+                {% for story in stories %}
+                <div class="article col-lg-6">
+                    <h3><a href="story/{{story.id}}">
+                            {{ story|title}}
+                        </a></h3>
+                    
+
+                    <div class="col-lg-2"></div>
+                    <div class = "col-lg-8">                        
+                        {% for article in articles %}
+                            
+                            {% if story.title == article.potentialstory.title %}                                               
+                            <div class="article_title ui-widget-content" data-id="{{article.id}}">
+                                {{ article.title|title|slice:":80" }}
+                            </div>
+                            {% endif %}
+                            
+                        {% endfor %}                        
+                    </div>
+                    <div class="col-lg-2"></div>
+
+                    <div class="row option_container">
+                        
+                        <div class="col-lg-6">
+                            <div class="options removeArticle ui-widget-header">
+                                DELETE ARTICLE
+                            </div>
                         </div>
-                    {% endfor %}
-                </div>
-            {% endfor %}
+                        <div class="col-lg-6">
+                            <div class="options updateArticle ui-widget-header" data-id="{{story.id}}">
+                                RE-ASSIGN ARTICLE
+                            </div>
+                        </div>                        
+                    </div>
+                    
+                </div>                  
+                {% endfor %}                
+            </div>
+        </div>
+{% endblock %}
 
-        </div>        
-    </body>
-</html>
+{% block extra_js %}
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="{% static "js/analyze.js" %}"></script>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "analyze/base.html" %}
+
+{% block body %}
+<div id = "potential_story">
+    <h2>{{ story.title | title }}</h2>
+    {% for article in articles %}
+        <div>
+            {{ article.title|title }}<br>
+        </div>
+    {% endfor %}
+</div>        
+{% endblock %}
+

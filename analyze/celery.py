@@ -8,7 +8,8 @@ from django.conf import settings
 # set the default Django settings module for celery
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bias_exposed.settings')
 from analyze.models import analyze_feed, FeedSource, compare_feed_to_others
-from analyze.models import PotentialStory, PotentialArticle
+from analyze.models import PotentialStory, PotentialArticle, PotentialWord
+from analyze.models import WordDetail
 
 app = Celery('analyze')
 
@@ -65,7 +66,8 @@ def check_all_feeds(allfeeds):
         if len(matches) > 1:
             story = PotentialStory(title=matches[0]['title'], first_key=key)
             story.save()
-            bulk_insert_list = []
+            bulk_insert_articles = []
+            bulk_insert_word_details = []
 
             for match in matches:
                 try:
@@ -80,12 +82,25 @@ def check_all_feeds(allfeeds):
                         match_quotes=match['reasons']['quotes'],
                         match_sentences=match['reasons']['sentences'],
                         match_key=match['key'])
+
+                    try:
+                        for word, count in match['feed_item_obj']['word_usage'].iteritems():
+                            word_to_use, word_exists = PotentialWord.objects.get_or_create(word=word)
+                            bulk_insert_word_details.append(
+                                WordDetail(potentialword=word_to_use,
+                                           potentialarticle=new_record,
+                                           usage=count
+                                           ))
+                    except Exception as err:
+                        print (err)
+
                     if not exists:
-                        bulk_insert_list.append(new_record)
+                        bulk_insert_articles.append(new_record)
 
                 except Exception as err:
                     print "Can't create DB record: " + str(err)
-            PotentialArticle.objects.bulk_create(bulk_insert_list)
+            PotentialArticle.objects.bulk_create(bulk_insert_articles)
+            WordDetail.objects.bulk_create(bulk_insert_word_details)
 
             # Combine potential matches into one potential story.
             for main_story in PotentialStory.objects.all():
