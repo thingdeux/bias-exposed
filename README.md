@@ -1,6 +1,11 @@
 # Bias.Exposed #
 
-A website that will take a look at the way news networks separately report top headlines.
+A web app that will analyze the way news networks separately report top headlines.
+
+
+
+
+
 
 #### Tech ####
 * Django

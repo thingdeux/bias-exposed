@@ -23,7 +23,7 @@
                             
                             {% if story.title == article.potentialstory.title %}                                               
                             <div class="article_title ui-widget-content" data-id="{{article.id}}">
-                                {{ article.title|title|slice:":80" }}
+                                {{ article.title|title|slice:":80" }} - <b>{{article.source|title}}</b>
                             </div>
                             {% endif %}
                             
@@ -34,12 +34,12 @@
                     <div class="row option_container">
                         
                         <div class="col-lg-6">
-                            <div class="options removeArticle ui-widget-header">
+                            <div class="options removeArticle ui-widget-header delete">
                                 DELETE ARTICLE
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            <div class="options updateArticle ui-widget-header" data-id="{{story.id}}">
+                            <div class="options updateArticle ui-widget-header reassign" data-id="{{story.id}}">
                                 RE-ASSIGN ARTICLE
                             </div>
                         </div>                        

@@ -4,5 +4,7 @@ from analyze import views
 
 urlpatterns = patterns('',
    url(r'^$', views.Index, name='index'),
-   url(r'^story/(?P<story>\w+)', views.Story, name='story')
+   url(r'^story/(?P<story>\w+)', views.Story, name='story'),
+   url(r'^reassign', views.Reassign, name='reassign'),
+   url(r'^delete', views.Delete, name='delete')
 )  # noqa
