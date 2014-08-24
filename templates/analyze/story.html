@@ -1,13 +1,49 @@
 {% extends "analyze/base.html" %}
 
 {% block body %}
-<div id = "potential_story">
-    <h2>{{ story.title | title }}</h2>
-    {% for article in articles %}
-        <div>
-            {{ article.title|title }}<br>
+<div class="container-fluid">
+    <div class="row">
+        
+        <div class="jumbotron text-center">
+            <h1>{{ story.title | title }}</h1>
         </div>
-    {% endfor %}
-</div>        
+        <div id="word-container">
+            {% for article in articles %}
+                <div class="col-md-3">
+                    <div class = "row text-center">
+                        <a href="{{article.url}}">                       
+                            <h4><b>{{article.source}}</b> - {{ article.title|title|slice:":38" }}</h4>
+                        </a>
+                    </div>
+                    
+                    <div class="row text-center">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                            <table>                        
+                            <th class="text-center">Word</th>
+                            <th class="text-center">Count</th>
+                            <th class="text-center">Actions</th>
+                            {% for word in words %}
+                                {% if article.id == word.potentialarticle.id%}
+                                    <tr>
+                                        <td><span class="word-result">{{ word.potentialword|capfirst }}</td>
+                                        <td>{{word.usage}}</td>
+                                        <td>
+                                            <a class="not-relevant-action"><span class="label label-danger">Not Relevant</span></a>
+                                        </td>
+                                    </span>                                
+                                    </tr>
+                                {% endif %}                        
+                            {% endfor %}
+                            </table>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>                                        
+                </div>
+            {% endfor %}
+        </div>
+        
+    </div>
+<div class="container">
 {% endblock %}
 

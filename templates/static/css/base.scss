@@ -4,11 +4,10 @@ body {
     overflow-x: hidden;
 }
 
+
 #potential_stories {
-    a {
-        text-decoration: none;         
-        color: #143D66 !important;
-    }       
+    text-decoration: none !important;
+    color: #143D66 !important;    
 }
 
 .border {
@@ -51,3 +50,21 @@ body {
     height: 50px;
     overflow: hidden;
 }
+
+#word-container {
+    padding: 5px;
+    a {
+        color: black;
+        text-decoration: none !important;
+    }
+}
+
+.word-result {
+    font-size: 25px;
+}
+
+.not-relevant-action {
+    cursor: pointer;    
+}
+
+.jumbotron { margin-bottom: 20px;}

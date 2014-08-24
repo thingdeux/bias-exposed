@@ -17,6 +17,9 @@ class PotentialStory(models.Model):
 class PotentialWord(models.Model):
     word = models.CharField(max_length=512, unique=True)
 
+    def __unicode__(self):
+        return self.word
+
 
 class PotentialArticle(models.Model):
     potentialstory = models.ForeignKey(PotentialStory)
