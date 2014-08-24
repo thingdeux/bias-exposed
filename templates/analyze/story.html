@@ -1,4 +1,5 @@
 {% extends "analyze/base.html" %}
+{% load staticfiles %}
 
 {% block body %}
 <div class="container-fluid">
@@ -9,7 +10,7 @@
         </div>
         <div id="word-container">
             {% for article in articles %}
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class = "row text-center">
                         <a href="{{article.url}}">                       
                             <h4><b>{{article.source}}</b> - {{ article.title|title|slice:":38" }}</h4>
@@ -29,7 +30,9 @@
                                         <td><span class="word-result">{{ word.potentialword|capfirst }}</td>
                                         <td>{{word.usage}}</td>
                                         <td>
-                                            <a class="not-relevant-action"><span class="label label-danger">Not Relevant</span></a>
+                                            <a class="not-relevant-action" data-article-id="{{word.potentialarticle.id}}" data-word-id="{{word.id}}">
+                                                <span class="label label-danger">Not Relevant</span>
+                                            </a>
                                         </td>
                                     </span>                                
                                     </tr>
@@ -45,5 +48,10 @@
         
     </div>
 <div class="container">
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" src="{% static "js/ajaxsetup.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/story.js" %}"></script>
 {% endblock %}
 

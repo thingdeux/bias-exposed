@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="{% static "css/jquery-ui.min.css" %}">
 {% endblock %}
 
 
@@ -52,6 +52,7 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>    
+    <script type="text/javascript" src="{% static "js/jquery-ui.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/ajaxsetup.js" %}"></script>
     <script type="text/javascript" src="{% static "js/analyze.js" %}"></script>
 {% endblock %}

@@ -14,6 +14,7 @@ def Index(request):
                                                   'articles': articles})
 
 
+@ensure_csrf_cookie
 def Story(request, story):
     story = PotentialStory.objects.get(id=story)
     articles = PotentialArticle.objects.filter(
@@ -45,8 +46,18 @@ def Delete(request):
             article_id = request.POST['article']
             to_delete = PotentialArticle.objects.get(id=article_id)
             to_delete.delete()
-            print ("Deleted")
             return HttpResponse(status=200)
-        except Exception as err:
-            print err
+        except:
+            return HttpResponse(status=500)
+
+
+@requires_csrf_token
+def Delete_Word_Detail(request):
+    if request.POST:
+        try:
+            word_id = request.POST['worddetail']
+            to_delete = WordDetail.objects.get(id=word_id)
+            to_delete.save()
+            return HttpResponse(status=200)
+        except:
             return HttpResponse(status=500)
