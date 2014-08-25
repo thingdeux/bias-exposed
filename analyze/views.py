@@ -52,12 +52,13 @@ def Delete(request):
 
 
 @requires_csrf_token
-def Delete_Word_Detail(request):
+def Worddelete(request):
     if request.POST:
         try:
             word_id = request.POST['worddetail']
             to_delete = WordDetail.objects.get(id=word_id)
-            to_delete.save()
+            to_delete.delete()
             return HttpResponse(status=200)
-        except:
+        except Exception as err:
+            print err
             return HttpResponse(status=500)
