@@ -73,7 +73,7 @@ def Testfeedrss(request):
 
 
 def Testfeedstory(request, story):
-    if story == u'1' or u'2' or u'3' or u'4':
+    if story:
         body = "Valid Story #" + str(story) + '<p class="story">\n' + '\
         This is a news story about the latest trend in racing! ' + '\
         It\'s called rev-running! <br>Its existence is normally a mystery' + '\
