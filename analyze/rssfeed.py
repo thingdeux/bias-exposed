@@ -18,10 +18,12 @@ class RSSFeed:
             self.feed_url = feed_url
             # Parse the RSS Feed
             feed = feedparser.parse(self.feed_url)
-            raw_feed_items = [a_feed for a_feed in feed['items']]
-            self.feed_title = feed['channel']['title'].lower()
             self.source = source_name
-            self.feed_items = self.build_feed_list(raw_feed_items)
+            raw_feed_items = [a_feed for a_feed in feed['items']]
+            if raw_feed_items:
+                self.feed_title = feed['channel']['title'].lower()
+                self.feed_items = self.build_feed_list(raw_feed_items)
+            # Fail Silently - empty feeds caught on process
         except Exception as err:
             print err
             return None

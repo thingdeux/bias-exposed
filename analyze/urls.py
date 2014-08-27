@@ -7,5 +7,7 @@ urlpatterns = patterns('',
    url(r'^story/(?P<story>\w+)', views.Story, name='story'),
    url(r'^reassign', views.Reassign, name='reassign'),
    url(r'^delete', views.Delete, name='delete'),
-   url(r'^worddelete', views.Worddelete, name='worddelete')
+   url(r'^worddelete', views.Worddelete, name='worddelete'),
+   url(r'^testfeed/(?P<story>\w+)', views.Testfeedstory, name="testfeedstory"),
+   url(r'^testfeed', views.Testfeedrss, name='testfeedrss')
 )  # noqa

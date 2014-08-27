@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+  <channel>
+    <title>TEST FEED</title>
+    <link>http://localhost:8000/analyze/testfeed</link>
+    <description>TEST RSS FEED</description>
+    <language>en</language>    
+    <item>
+      <title>STORY #1</title>
+      <description>This is test Story #1</description>
+      <pubDate>Tue, 26 Aug 2014 17:13:00 -0400</pubDate>
+      <link>http://localhost:8000/analyze/testfeed/1</link>      
+    </item>
+    <item>
+      <title>STORY #2</title>
+      <description>This is test Story #2</description>
+      <pubDate>Tue, 26 Aug 2014 17:13:00 -0400</pubDate>
+      <link>http://localhost:8000/analyze/testfeed/2</link>      
+    </item>
+    <item>
+      <title>STORY #3</title>
+      <description>This is test Story #3</description>
+      <pubDate>Tue, 26 Aug 2014 17:13:00 -0400</pubDate>
+      <link>http://localhost:8000/analyze/testfeed/3</link>      
+    </item>
+    <item>
+      <title>STORY #4</title>
+      <description>This is test Story #4</description>
+      <pubDate>Tue, 26 Aug 2014 17:13:00 -0400</pubDate>
+      <link>http://localhost:8000/analyze/testfeed/4</link>      
+    </item>
+    <item>
+      <title>STORY #5</title>
+      <description>This is test Story #5</description>
+      <pubDate>Tue, 26 Aug 2014 17:13:00 -0400</pubDate>
+      <link>http://localhost:8000/analyze/testfeed/5</link>      
+    </item>
+    <item>      
+      <description>This is test Story #6</description>
+      <pubDate>Tue, 26 Aug 2014 17:13:00 -0400</pubDate>
+      <link>http://localhost:8000/analyze/testfeed/6</link>      
+    </item>
+    
+  </channel>
+</rss>

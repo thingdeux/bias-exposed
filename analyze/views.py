@@ -3,6 +3,7 @@ from analyze.models import PotentialStory, PotentialArticle
 from analyze.models import WordDetail
 from django.http import HttpResponse
 from django.views.decorators.csrf import requires_csrf_token, ensure_csrf_cookie
+from django.conf import settings
 
 
 @ensure_csrf_cookie
@@ -62,3 +63,21 @@ def Worddelete(request):
         except Exception as err:
             print err
             return HttpResponse(status=500)
+
+
+def Testfeedrss(request):
+    from os import path
+    feed = open(path.join(settings.BASE_DIR + "/analyze/test_data/test.rss"))
+    return HttpResponse(content=feed,
+                        content_type='application/atom+xml')
+
+
+def Testfeedstory(request, story):
+    if story == u'1' or u'2' or u'3' or u'4':
+        body = "Valid Story #" + str(story) + '<p class="story">\n' + '\
+        This is a news story about the latest trend in racing! ' + '\
+        It\'s called rev-running! <br>Its existence is normally a mystery' + '\
+        But this intrepid reporter has gained an exclusive behind the ' + '\
+        curtain walkthrough of what it\'s all about </p>'
+
+        return HttpResponse(body, content_type='text/html')

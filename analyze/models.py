@@ -144,11 +144,11 @@ def create_initial_parse_rules():
 
 
 def get_parse_rule(feed_name):
-    # Should only ever be one parse rule per feed.
-    rule = ParseRule.objects.get(source__source=feed_name)
-    if rule:
+    try:
+        # Should only ever be one parse rule per feed.
+        rule = ParseRule.objects.get(source__source=feed_name)
         return (rule.dom_selector)
-    else:
+    except:
         return None
 
 
