@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from analyze.models import PotentialStory, PotentialArticle
 from analyze.models import WordDetail
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.views.decorators.csrf import requires_csrf_token, ensure_csrf_cookie
 from django.conf import settings
 
@@ -68,16 +68,18 @@ def Worddelete(request):
 def Testfeedrss(request):
     from os import path
     feed = open(path.join(settings.BASE_DIR + "/analyze/test_data/test.rss"))
-    return HttpResponse(content=feed,
+    return StreamingHttpResponse(streaming_content=feed,
                         content_type='application/atom+xml')
 
 
 def Testfeedstory(request, story):
-    if story:
-        body = "Valid Story #" + str(story) + '<p class="story">\n' + '\
-        This is a news story about the latest trend in racing! ' + '\
-        It\'s called rev-running! <br>Its existence is normally a mystery' + '\
-        But this intrepid reporter has gained an exclusive behind the ' + '\
-        curtain walkthrough of what it\'s all about </p>'
+    if story in [u'1', u'2', u'3']:
+        body = "<!DOCTYPE HTML><html><head><title>Valid Story #" + str(story) + """
+        </title><h1>The Best News Article</h1><p class="story">
+        This is a "news" 'story' about the latest trend in racing!
+        It\'s called "rev-running"! <br>Its existence is normally a mystery
+        But this intrepid reporter has gained an exclusive behind the
+        curtain walkthrough of what it\'s all about </p><p>None of this
+        should be picked up, Umbrella, Sheep, Barely made</p></body></html>"""
 
         return HttpResponse(body, content_type='text/html')

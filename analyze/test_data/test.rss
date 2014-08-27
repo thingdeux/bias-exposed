@@ -29,8 +29,7 @@
       <pubDate>Tue, 26 Aug 2014 17:13:00 -0400</pubDate>
       <link>http://localhost:8081/analyze/testfeed/4</link>      
     </item>
-    <item>
-      <title>STORY #5</title>
+    <item>      
       <description>This is test Story #5</description>
       <pubDate>Tue, 26 Aug 2014 17:13:00 -0400</pubDate>
       <link>http://localhost:8081/analyze/testfeed/5</link>      
@@ -38,8 +37,7 @@
     <item>
       <title>STORY #6</title>
       <description>This is test Story #6</description>
-      <pubDate>Tue, 26 Aug 2014 17:13:00 -0400</pubDate>
-      <link>http://localhost:8081/analyze/testfeed/6</link>      
+      <pubDate>Tue, 26 Aug 2014 17:13:00 -0400</pubDate>          
     </item>
     
   </channel>

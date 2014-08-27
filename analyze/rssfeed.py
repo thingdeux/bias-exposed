@@ -33,63 +33,70 @@ class RSSFeed:
     def build_feed_list(self, feed_items):
         def check_item_exists(check_string):
             try:
-                # Check at least 3 feeds for the existence
-                # Of the item parameter
-                for a_feed in feed_items[:3]:
-                    if len(a_feed[check_string]) > 0:
+                # Check at least 6 feeds for the existence
+                # Of the item parameter. At least 3 of them
+                # Have to have the passed fields
+                acceptableNumber = 0
+                for a_feed in feed_items[:6]:
+                    try:
+                        if len(a_feed[check_string]) > 0:
+                            acceptableNumber += 1
+                    except:
                         pass
-                    else:
-                        raise NameError
-                        return False
-                return True
-            except Exception as err:
-                print ("Unable to find " + str(err) +
-                       " on " + str(self.source))
-                return None
+                if acceptableNumber >= 3:
+                    return True
+                else:
+                    return False
+            except:
+                return False
 
         try:
-            feed_has_title = check_item_exists('title')
-            feed_has_link = check_item_exists('link')
-            feed_has_date = check_item_exists('published_parsed')
+            feeds_have_titles = check_item_exists('title')
+            feeds_have_links = check_item_exists('link')
+            feeds_have_dates = check_item_exists('published_parsed')
             parsed_items = []
 
             # There's no need to process the RSS items if they don't
             # have titles and feed links
-            if feed_has_title is True and feed_has_link is True:
+            if feeds_have_titles is True and feeds_have_links is True:
                 for count, feed_item in enumerate(feed_items[:FEED_LIMIT]):
-                    raw_html = self.get_http_content(feed_item['link'])
-                    story = {
-                        'id': count,
-                        'title': feed_item['title'].lower(),
-                        'tokenized_title': self.tokenize_title(
-                            feed_item['title'].lower()),
-                        'link': feed_item['link'],
-                        'raw_html': raw_html.lower(),
-                        'quotes': self.build_quote_list(raw_html)
-                        }
-                    # If there's a published date add it.
-                    if feed_has_date:
-                        story['date'] = feed_item['published_parsed']
-                    else:
-                        story['date'] = localtime()
+                    try:
+                        raw_html = self.get_http_content(feed_item['link'])
+                        story = {
+                            'id': count,
+                            'title': feed_item['title'].lower(),
+                            'tokenized_title': self.tokenize_title(
+                                feed_item['title'].lower()),
+                            'link': feed_item['link'],
+                            'raw_html': raw_html.lower(),
+                            'quotes': self.build_quote_list(raw_html)
+                            }
+                        # If there's a published date add it.
+                        if feeds_have_dates:
+                            story['date'] = feed_item['published_parsed']
+                        else:
+                            story['date'] = localtime()
 
-                    if len(story['raw_html']) > 0:
-                        try:
-                            # Create tokens of the words in the article
-                            token = [word.lower() for word in
-                                     self.tokenize_string(story['raw_html'])
-                                     if word not in get_stop_words()]
-                            # Count the number of times each word is usage
-                            # If it is at least as long as the minium above
-                            # And used x amount of times.
-                            story['word_usage'] = self.count_usage(token)
-                            story['tokenized_body'] = set(token)
-                            # Break the article up by sentences
-                            story['sentences'] = self.tokenize_by_sentence(
-                                story['raw_html'])
-                        except Exception as err:
-                            print err
-                    parsed_items.append(story)
+                        if len(story['raw_html']) > 0:
+                            try:
+                                # Create tokens of the words in the article
+                                token = [word.lower() for word in
+                                         self.tokenize_string(
+                                         story['raw_html'])
+                                         if word not in get_stop_words()]
+                                # Count the number of times each word is usage
+                                # If it is at least as long as the minium above
+                                # And used x amount of times.
+                                story['word_usage'] = self.count_usage(token)
+                                story['tokenized_body'] = set(token)
+                                # Break the article up by sentences
+                                story['sentences'] = self.tokenize_by_sentence(
+                                    story['raw_html'])
+                            except Exception as err:
+                                print err
+                        parsed_items.append(story)
+                    except:
+                        pass
 
                 return (parsed_items)
             else:
