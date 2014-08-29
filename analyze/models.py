@@ -23,7 +23,7 @@ class PotentialWord(models.Model):
 
 class PotentialArticle(models.Model):
     potentialstory = models.ForeignKey(PotentialStory)
-    source = models.CharField("Feed Source", max_length=50)
+    source = models.CharField("Article Source", max_length=50)
     # Feed Title
     title = models.CharField("Title", max_length=512)
     # RSS Feed URL

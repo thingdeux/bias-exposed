@@ -8,7 +8,7 @@ from requests import get
 # Some feeds have more than 40 entries (I'm looking at you CNN)
 # Don't need that many.
 FEED_LIMIT = 15
-MIN_WORD_USAGE = 4
+MIN_WORD_USAGE = 3
 MIN_WORD_LENGTH = 3
 
 

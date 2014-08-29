@@ -10,5 +10,5 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^analyze/', include('analyze.urls')),
-    url(r'^feed/', include('feed.urls'))
+    url(r'^', include('stories.urls'))
 )

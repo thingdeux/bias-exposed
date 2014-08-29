@@ -2,7 +2,8 @@ from django.shortcuts import render
 from analyze.models import PotentialStory, PotentialArticle
 from analyze.models import WordDetail
 from django.http import HttpResponse, StreamingHttpResponse
-from django.views.decorators.csrf import requires_csrf_token, ensure_csrf_cookie
+from django.views.decorators.csrf import requires_csrf_token
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.conf import settings
 
 
@@ -69,7 +70,7 @@ def Testfeedrss(request):
     from os import path
     feed = open(path.join(settings.BASE_DIR + "/analyze/test_data/test.rss"))
     return StreamingHttpResponse(streaming_content=feed,
-                        content_type='application/atom+xml')
+                                 content_type='application/atom+xml')
 
 
 def Testfeedstory(request, story):
