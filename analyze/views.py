@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from analyze.models import PotentialStory, PotentialArticle
-from analyze.models import WordDetail
+from analyze.models import WordDetail, PotentialStoryForm
 from django.http import HttpResponse, StreamingHttpResponse
+from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import requires_csrf_token
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.conf import settings
@@ -18,15 +19,30 @@ def Index(request):
 
 @ensure_csrf_cookie
 def Story(request, story):
+    if request.method == "POST":
+        form = PotentialStoryForm(request.POST)
+        if form.is_valid():
+            story_id = request.POST['story_id']
+            story = PotentialStory.objects.get(id=story_id)
+            story.title = form.cleaned_data['title']
+            story.tag = form.cleaned_data['tag']
+            story.save()
+            return HttpResponseRedirect('/analyze/')
+    else:
+        form = PotentialStoryForm()
+
     story = PotentialStory.objects.get(id=story)
     articles = PotentialArticle.objects.filter(
         potentialstory=story).select_related()
     words = WordDetail.objects.filter(
-        potentialarticle__potentialstory=story).select_related().order_by('-usage')
+        potentialarticle__potentialstory=story).select_related().order_by(
+        '-usage')
 
-    return render(request, 'analyze/story.html', {'story': story,
-                                                  'articles': articles,
-                                                  'words': words})
+    template_name = 'analyze/story.html'
+    return render(request, template_name, {'story': story,
+                                           'articles': articles,
+                                           'words': words,
+                                           'form': form})
 
 
 @requires_csrf_token

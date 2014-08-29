@@ -37,8 +37,8 @@ class PotentialArticleInline(admin.StackedInline):
 
 class PotentialStoryAdmin(admin.ModelAdmin):
     inlines = [PotentialArticleInline]
-    fields = (['title', 'to_publish'])
-    list_display = (['title', 'to_publish'])
+    fields = (['title', 'tag'])
+    list_display = (['title', 'tag'])
 
 
 class PotentialArticleAdmin(admin.ModelAdmin):

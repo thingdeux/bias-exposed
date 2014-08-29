@@ -2,17 +2,22 @@ from django.db import models
 # from feed.models import Story, Feed, Word
 from rssfeed import RSSFeed
 from django.conf import settings
+from django import forms
 
 
 class PotentialStory(models.Model):
     # Title of the major news story
     title = models.TextField(max_length=1024, default="")
-    to_publish = models.BooleanField("Publish?", default=False)
     first_key = models.CharField(max_length=50)
+    tag = models.TextField(max_length=512, default="")
 
     def __unicode__(self):
         return self.title
 
+
+class PotentialStoryForm(forms.Form):
+    title = forms.CharField(label="Title", max_length=1024)
+    tag = forms.CharField(label="Tagline", max_length=512)
 
 class PotentialWord(models.Model):
     word = models.CharField(max_length=512, unique=True)

@@ -4,7 +4,7 @@ from datetime import datetime
 
 class Story(models.Model):
     """
-    A major news story. There will be one of these for many Feeds.
+    A major news story. There will be one of these to many Articles.
     """
     # Title of the major news story
     title = models.TextField(max_length=1024)
@@ -31,7 +31,7 @@ class Word(models.Model):
 
 class Article(models.Model):
     """
-    Each feed will be tied to a major story.
+    Each Article will be tied to a major story.
     There will be multiple feeds for each story,
     each coming from a different news source (ex: AP/BBC/Fox).
     """
@@ -40,16 +40,27 @@ class Article(models.Model):
     source = models.CharField("Article Source", max_length=50)
     # Feed Title
     title = models.CharField("Title", max_length=512)
-    # RSS Feed URL
+    # Article feed URL
     url = models.URLField("URL", max_length=2000)
     # Many words from
-    words = models.ManyToManyField(Word, through='WordDetails')
+    words = models.ManyToManyField(Word, through='WordDetail')
+    # Whether or not the article is neutral, seemingly negative or
+    # Seemingly positive about this particular topic.
+    MOOD_SELECTION = {
+        ('VERY_POSITIVE', "Very Positive"),
+        ('POSITIVE', "Positive"),
+        ('NEUTRAL', "Neutral"),
+        ('NEGATIVE', "Negative"),
+        ('VERY_NEGATIVE', "Very Negative"),
+    }
+    mood = models.CharField(max_length=30, choices=MOOD_SELECTION,
+                            db_index=True, default="NEUTRAL")
 
     def __unicode__(self):
         return (self.source + u": " + self.title[:10])
 
 
-class WordDetails(models.Model):
+class WordDetail(models.Model):
     word = models.ForeignKey(Word)
     potentialarticle = models.ForeignKey(Article)
     usage = models.PositiveIntegerField(default=1)
