@@ -60,6 +60,9 @@ class WordDetail(models.Model):
     potentialarticle = models.ForeignKey(PotentialArticle)
     usage = models.PositiveIntegerField(default=1)
 
+    def __unicode__(self):
+        return (self.potentialword)
+
 
 class FeedSource(models.Model):
     source = models.CharField("News Source", max_length=128, unique=True)

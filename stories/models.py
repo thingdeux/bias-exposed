@@ -12,6 +12,7 @@ class Story(models.Model):
     tag = models.TextField(max_length=512, default="")
     # Slug for the url of the story
     article_slug = models.SlugField(max_length=1400)
+    isPublished = models.BooleanField("Story Active?", default=False)
     published_date = models.DateField(auto_now=True)
     # | Seperated list of shared words between articles
     shared_words = models.CharField(max_length=4000, default="")
@@ -64,5 +65,5 @@ class Article(models.Model):
 
 class Detail(models.Model):
     word = models.ForeignKey(Word)
-    potentialarticle = models.ForeignKey(Article)
+    article = models.ForeignKey(Article)
     usage = models.PositiveIntegerField(default=1)

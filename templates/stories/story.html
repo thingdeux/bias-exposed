@@ -1,0 +1,31 @@
+{% extends "stories/base.html" %}
+{% load staticfiles %}
+
+{% block title %} Bias.Exposed - {{ story.title }} {% endblock %}
+
+{% block body %}    
+    <h1 class="text-center">{{ story.title }}</h1>
+    <div id = "shared_words" class="col-md-2 text-center">
+        <h2>Shared Words</h2>
+        <p>More than half of the articles agreed that these words should have been used.</p>
+        {% for word in shared_words %}
+            {{ word | title }}<br>
+        {% endfor %}
+    </div>    
+    <div id = "Story" class="col-md-10">
+        <h2> Articles </h2>     
+        {% for article in articles %}
+            <div class="row">
+            <h3>{{ article.title|title }} - {{article.source }}</h3>
+            
+            {% for detail in word_details %}
+                <div class="col-md-3">                        
+                    {% if detail.article.id == article.id %}
+                        {{ detail.word }} ({{detail.usage}})
+                    {% endif %}
+                </div>
+            {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -11,6 +11,7 @@ from analyze.models import analyze_feed, FeedSource, compare_feed_to_others
 from analyze.models import PotentialStory, PotentialArticle, PotentialWord
 from analyze.models import WordDetail
 from stories.models import Story, Word, Article, Detail
+from django.utils.text import slugify
 
 app = Celery('analyze')
 
@@ -146,24 +147,36 @@ def compare_tests():
 
 @app.task
 def publish_story(story_id):
-    def stripCharacters(title):
-        slug = ''
-        for letter in title:
-            if letter not in ['.', ';', ':', '!', '%', '$', '*', '|']:
-                if letter == " ":
-                    # Prevent duplicate hypens in the slug
-                    if slug[-1:] != "-":
-                        slug = slug + "-"
-                else:
-                    slug = slug + letter
+    def process_shared_words(querySet, halfOfArticles):
+        # Building a dictionary with words as indexes so that I can see how
+        # many articles Re-Use the same word, if at least half of them re-use
+        # a word that word will be Added to the "agreed upon" words for
+        # the story and filtered out of the final Analysis.
+        shared_dict = {}
+        for detail in potentialWords:
+            try:
+                shared_dict[detail.potentialword.word].append(detail)
+            except:
+                shared_dict[detail.potentialword.word] = [detail]
 
-        return slug
+        shared_words = ""
+        for key, value in shared_dict.iteritems():
+            try:
+                if len(value) > halfOfArticles:
+                    print ("Deleting: " + key)
+                    for detail in value:
+                        detail.delete()
+                    shared_words = shared_words + key + "|"
+            except Exception as err:
+                print "Couldn't create dict: " + str(err)
+
+        return shared_words
 
     potentialStory = PotentialStory.objects.get(id=story_id)
     if potentialStory:
         print (u"Publishing " + potentialStory.title)
         try:
-            title_slug = stripCharacters(potentialStory.title)
+            title_slug = slugify(potentialStory.title)
             story = Story(title=potentialStory.title, article_slug=title_slug,
                           tag=potentialStory.tag)
             story.save()
@@ -172,9 +185,39 @@ def publish_story(story_id):
             potentialWords = WordDetail.objects.filter(
                 potentialarticle__potentialstory=potentialStory).select_related()
 
-            print potentialArticles
-            print potentialWords
+            # If at least half of the articles re-use the same words remove
+            # them from the final analysis
+            half_of_total_articles = len(potentialArticles) / 2
+            sharedWords = process_shared_words(potentialWords,
+                                               half_of_total_articles)
+            story.shared_words = sharedWords
+            story.save()
+
+            bulk_insert_details = []
+            for article in potentialArticles:
+                # Process article
+                try:
+                    newArticle = Article(story=story, source=article.source,
+                                         title=article.title, url=article.url)
+                    newArticle.save()
+                    # Process words and word details
+                    try:
+                        for word_detail in WordDetail.objects.filter(
+                                potentialarticle=article):
+                            word_to_use, exists = Word.objects.get_or_create(
+                                word=word_detail.potentialword.word)
+                            bulk_insert_details.append(
+                                Detail(word=word_to_use,
+                                       article=newArticle,
+                                       usage=word_detail.usage))
+                    except Exception as err:
+                        print err
+
+                except Exception as err:
+                    print err
+
+            Detail.objects.bulk_create(bulk_insert_details)
 
         except Exception as err:
-            print ("Unable to publish article: " + str(story_id))
+            print ("Unable to publish story: " + str(story_id))
             print err

@@ -1,0 +1,11 @@
+{% extends "stories/base.html" %}
+{% block title %} Bias.Exposed {% endblock %}
+
+{% block body %}
+    <div id = "Stories" class="col-md-6 text-center">
+        {% for story in stories %}         
+            <a href="stories/{{ story.article_slug }}"><h3>{{ story.title }}</h3></a>
+            {{ story.tag }}                                   
+        {% endfor %}
+    </div>
+{% endblock %}
