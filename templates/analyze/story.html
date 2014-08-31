@@ -7,13 +7,16 @@
         
         <div class="jumbotron text-center">
             <h1>{{ story.title | title }}</h1>
+            <h4>{{ story.tag | title }}</h4>
+        
+        
+            <form action="{{ action }}" method="post" class="text-center">        
+                {% csrf_token %}
+                <h3>{{ form }}
+                <input type="hidden" value="{{story.id}}" name="story_id"/><br>
+                <input type="submit" value="Publish Story" /></h3>
+            </form>
         </div>
-        <form action="" method="post">
-            {% csrf_token %}
-            {{ form }}
-            <input type="hidden" value="{{story.id}}" name="story_id"/>
-            <input type="submit" value="Publish Story" />
-        </form>
         <div id="word-container">
             {% for article in articles %}
                 <div class="col-md-4">

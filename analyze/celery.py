@@ -10,6 +10,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bias_exposed.settings')
 from analyze.models import analyze_feed, FeedSource, compare_feed_to_others
 from analyze.models import PotentialStory, PotentialArticle, PotentialWord
 from analyze.models import WordDetail
+from stories.models import Story, Word, Article, Detail
 
 app = Celery('analyze')
 
@@ -141,3 +142,39 @@ def compare_tests():
     result = chord(head)(callback)
 
     return result
+
+
+@app.task
+def publish_story(story_id):
+    def stripCharacters(title):
+        slug = ''
+        for letter in title:
+            if letter not in ['.', ';', ':', '!', '%', '$', '*', '|']:
+                if letter == " ":
+                    # Prevent duplicate hypens in the slug
+                    if slug[-1:] != "-":
+                        slug = slug + "-"
+                else:
+                    slug = slug + letter
+
+        return slug
+
+    potentialStory = PotentialStory.objects.get(id=story_id)
+    if potentialStory:
+        print (u"Publishing " + potentialStory.title)
+        try:
+            title_slug = stripCharacters(potentialStory.title)
+            story = Story(title=potentialStory.title, article_slug=title_slug,
+                          tag=potentialStory.tag)
+            story.save()
+            potentialArticles = PotentialArticle.objects.filter(
+                potentialstory=potentialStory).select_related()
+            potentialWords = WordDetail.objects.filter(
+                potentialarticle__potentialstory=potentialStory).select_related()
+
+            print potentialArticles
+            print potentialWords
+
+        except Exception as err:
+            print ("Unable to publish article: " + str(story_id))
+            print err

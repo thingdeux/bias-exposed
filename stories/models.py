@@ -13,6 +13,8 @@ class Story(models.Model):
     # Slug for the url of the story
     article_slug = models.SlugField(max_length=1400)
     published_date = models.DateField(auto_now=True)
+    # | Seperated list of shared words between articles
+    shared_words = models.CharField(max_length=4000, default="")
 
     def __unicode__(self):
         return self.title
@@ -43,7 +45,7 @@ class Article(models.Model):
     # Article feed URL
     url = models.URLField("URL", max_length=2000)
     # Many words from
-    words = models.ManyToManyField(Word, through='WordDetail')
+    words = models.ManyToManyField(Word, through='Detail')
     # Whether or not the article is neutral, seemingly negative or
     # Seemingly positive about this particular topic.
     MOOD_SELECTION = {
@@ -60,7 +62,7 @@ class Article(models.Model):
         return (self.source + u": " + self.title[:10])
 
 
-class WordDetail(models.Model):
+class Detail(models.Model):
     word = models.ForeignKey(Word)
     potentialarticle = models.ForeignKey(Article)
     usage = models.PositiveIntegerField(default=1)

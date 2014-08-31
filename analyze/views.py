@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from analyze.models import PotentialStory, PotentialArticle
 from analyze.models import WordDetail, PotentialStoryForm
+from analyze.celery import publish_story
 from django.http import HttpResponse, StreamingHttpResponse
 from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import requires_csrf_token
@@ -27,6 +28,7 @@ def Story(request, story):
             story.title = form.cleaned_data['title']
             story.tag = form.cleaned_data['tag']
             story.save()
+            publish_story.delay(story.id)
             return HttpResponseRedirect('/analyze/')
     else:
         form = PotentialStoryForm()
@@ -81,7 +83,11 @@ def Worddelete(request):
             print err
             return HttpResponse(status=500)
 
-
+"""
+These views are only used in the test suite.
+I do not want to rely on external RSS Feeds for my testing.
+These feeds serve an rss feed and some fake articles.
+"""
 def Testfeedrss(request):
     from os import path
     feed = open(path.join(settings.BASE_DIR + "/analyze/test_data/test.rss"))

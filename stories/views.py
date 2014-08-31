@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from stories.models import Story, Article, Word, WordDetail
+from stories.models import Story, Article, Word, Detail
 
 
 def Index(request):

@@ -67,4 +67,8 @@ body {
     cursor: pointer;    
 }
 
-.jumbotron { margin-bottom: 20px;}
+.jumbotron { 
+    margin-bottom: 20px;
+    label { margin-left: 30px; }
+    #id_title, #id_tag { margin-left: 20px;}
+}

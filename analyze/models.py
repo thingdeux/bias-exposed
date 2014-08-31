@@ -3,6 +3,7 @@ from django.db import models
 from rssfeed import RSSFeed
 from django.conf import settings
 from django import forms
+from django.forms import ModelForm
 
 
 class PotentialStory(models.Model):
@@ -15,9 +16,17 @@ class PotentialStory(models.Model):
         return self.title
 
 
-class PotentialStoryForm(forms.Form):
-    title = forms.CharField(label="Title", max_length=1024)
-    tag = forms.CharField(label="Tagline", max_length=512)
+class PotentialStoryForm(ModelForm):
+    class Meta:
+        model = PotentialStory
+        fields = ['title', 'tag']
+        widgets = {
+            'title': forms.TextInput(
+                attrs={'placeholder': 'Enter Story Title'}),
+            'tag': forms.TextInput(
+                attrs={'placeholder': 'Enter Tag Line'})
+        }
+
 
 class PotentialWord(models.Model):
     word = models.CharField(max_length=512, unique=True)
