@@ -2,6 +2,10 @@
 
 A web app that will analyze the way news networks separately report top headlines.
 
+<img src="https://raw.github.com/thingdeux/bias-exposed/master/templates/static/screenshots/IndexV0-5.jpg"></img>
+
+
+* Update: September 1st (Labor Day) - Just about done functionally, need to write user auth. into the custom admin form, continue creating unit tests and finalize the front-end.
 
 * Update: August 24th - Most of the back-end functionality completed, moving to front end and unit tests!
 

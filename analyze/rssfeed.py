@@ -8,7 +8,7 @@ from requests import get
 # Some feeds have more than 40 entries (I'm looking at you CNN)
 # Don't need that many.
 FEED_LIMIT = 15
-MIN_WORD_USAGE = 3
+MIN_WORD_USAGE = 4
 MIN_WORD_LENGTH = 3
 
 
@@ -201,6 +201,7 @@ class RSSFeed:
         from models import get_parse_rule
         return (get_parse_rule(string))
 
+
 # Common english words that should be excluded from the analysis
 def get_stop_words():
     stopWords = set(['i', 'me', 'my', 'myself', 'we', 'our', 'ours',
@@ -223,6 +224,6 @@ def get_stop_words():
                      'very', 's', 't', 'can', 'will', 'just', 'don', 'should',
                      'now', 'said', 'the', 'said', 'the', 'could', 'during',
                      ',', 'also', "'", 'mr', 'mr.', 'ms', 'ms', 'mrs', 'say',
-                     'sen.'])
+                     'sen.', 'said.', 'rep.', 'ms.', 'mrs.'])
 
     return stopWords
