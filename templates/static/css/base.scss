@@ -91,3 +91,45 @@ body {
     float: left;
     z-index: 1;
 }
+
+#site-header { margin-bottom: 50px; }
+
+#site-title { font-size: 65px;
+}
+
+.tag-text {
+    margin-top: -8px;
+}
+
+.gutter {
+    width: 10%;
+    background-color: black;
+    height: 100%;
+    overflow: hidden;  
+    position: absolute;
+    background-repeat: repeat-y;
+    top: 0;
+}
+
+#right-gutter {
+    @extend .gutter;    
+    float: right;
+    right: 0;    
+}
+
+#left-gutter {
+    @extend .gutter;
+    float: left;    
+}
+
+#Stories {
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+#page-choices {
+    margin-top: 30px;
+    .step-links {
+        font-size: 20px;    
+    }
+}

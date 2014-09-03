@@ -2,10 +2,33 @@
 {% block title %} Bias.Exposed {% endblock %}
 
 {% block body %}
-    <div id = "Stories" class="col-md-6 text-center">
-        {% for story in stories %}         
-            <a href="stories/{{ story.article_slug }}"><h3>{{ story.title }}</h3></a>
-            {{ story.tag }}                                   
-        {% endfor %}
+    <div id="left-gutter" class="hidden-sm hidden-xs"></div>
+    <div class="row text-center">
+        <div class="col-xs-12" id="site-header">        
+            <span id="site-title">Bias Exposed</span><br>
+            <div class="tag-text">Political News Word Analysis</div>
+        </div>
     </div>
+    <div class = "row">        
+        <div id = "Stories" class="col-sm-12 text-center">
+            {% for story in stories %}         
+                <h3><a href="stories/{{ story.article_slug }}">{{ story.title }}</a></h3>
+                <div class="tag-text">{{ story.tag }}</div>
+            {% endfor %}
+        </div>
+        <div class="row">        
+            <div id = "page-choices" class="col-xs-12 text-center">
+                <span class="step-links">
+                    {% if stories.has_previous %}
+                        <a href="?page={{ stories.previous_page_number }}"> &#60;- Newer</a>
+                    {% endif %}
+                   
+                    {% if stories.has_next %}
+                        <a href="?page={{ stories.next_page_number }}"> Older -&#62;  </a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>         
+    </div>
+    <div id="right-gutter" class="hidden-sm hidden-xs"></div>
 {% endblock %}

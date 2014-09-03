@@ -1,9 +1,22 @@
 from django.shortcuts import render
 from stories.models import Story, Article, Detail
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+MAX_ARTICLES_PER_PAGE = 10
 
 def Index(request):
     stories = Story.objects.all()
+    # Handler to manage paginator
+    paginator = Paginator(stories, MAX_ARTICLES_PER_PAGE)
+    page = request.GET.get('page')
+
+    try:
+        stories = paginator.page(page)
+    except PageNotAnInteger:
+        stories = paginator.page(1)
+    except EmptyPage:
+        stories = paginator.page(paginator.num_pages)
+
     return render(request, 'stories/index.html', {'stories': stories})
 
 
