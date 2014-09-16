@@ -20,4 +20,4 @@ A web app that will analyze the way news networks separately report top headline
 * nltk (natural language toolkit)
 
 #### nltk language corpus requirements ####
-* stopwords
+* wordnet
