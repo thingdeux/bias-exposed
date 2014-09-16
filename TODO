@@ -4,7 +4,10 @@ If there are any issues reading feed lists or performing any of the stages - fla
     [Failure Conditions]
         Connection reset or time out --- wait and restart check in 10 mins (CNN with > 40 items)
 
-If sentence matches are too high - it's probably just borrowed from the AP
 
-Write auth checks into potential page.
 
+
+Setup "cronjob" that runs the analysis job
+Finish Design on view
+Complete Unit Tests
+Secondary check for empty stories after the common word match has been performed.

@@ -7,8 +7,13 @@ from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import requires_csrf_token
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.admin.views.decorators import staff_member_required
 
 
+@login_required(login_url='/analyze/login/')
+@staff_member_required
 @ensure_csrf_cookie
 def Index(request):
     stories = PotentialStory.objects.all()
@@ -46,6 +51,37 @@ def Story(request, story):
                                            'words': words,
                                            'form': form})
 
+
+@ensure_csrf_cookie
+def Login(request):
+    if request.GET:
+        return render(request, 'analyze/login.html',
+                      {'messages': 'Please Login'})
+    elif request.POST:
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                # Redirect to Success Page
+                return HttpResponseRedirect('/analyze/')
+            else:
+                # Return a disabled account error
+                return render(request, 'analyze/login.html',
+                              {'messages': 'This account is Disabled'})
+        else:
+            # Return Invalid Login error
+            return render(request, 'analyze/login.html',
+                          {'messages': 'Invalid Login / Incorrect Password'})
+
+
+def Logout(request):
+    # Logout User
+    logout(request)
+    template_name = 'analyze/logout.html'
+    return render(request, template_name)
 
 @requires_csrf_token
 def Reassign(request):
@@ -88,6 +124,8 @@ These views are only used in the test suite.
 I do not want to rely on external RSS Feeds for my testing.
 These feeds serve an rss feed and some fake articles.
 """
+
+
 def Testfeedrss(request):
     from os import path
     feed = open(path.join(settings.BASE_DIR + "/analyze/test_data/test.rss"))

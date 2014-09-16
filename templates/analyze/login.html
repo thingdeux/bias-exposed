@@ -1,0 +1,25 @@
+{% extends "analyze/base.html" %}
+{% load staticfiles %}
+
+{% block body %}    
+    <div id="site-header" class="col-xs-12 text-center">
+        <h1>Analyze Admin Section</h1>
+    </div>
+    <div class="col-xs-12 text-center">
+        <h4>{{ messages }}</h4>
+        <form name="login_info" action="login" method="post">
+        {% csrf_token %}
+            <div class="form-input">
+                <label for="user">Username:</label>
+                <input id="user" type="text" name="username" maxlength="254"></input>
+            </div>
+            <div class="form-input">
+                <label for="pass">Password:</label>
+                <input id="pass" type="password" name="password"></input>
+            </div>
+            <div class="form-input">
+                <input type="submit" value="Login"></input>
+            </div>
+        </form>
+    </div>    
+{% endblock %}

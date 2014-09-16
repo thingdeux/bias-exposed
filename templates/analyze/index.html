@@ -6,49 +6,52 @@
 {% endblock %}
 
 
-{% block body %}    
-        <div class="row" id="analyze_container">
-            <div id = "potential_stories" class="text-center">
+{% block body %}
+    <div style="padding: 10px;" class="text-right">
+        <a href="/analyze/logout"><input type="button" value="Logout" /></a>
+    </div>
+    <div class="row" id="analyze_container">
+        <div id = "potential_stories" class="text-center">
+            
+            {% for story in stories %}
+            <div class="article col-lg-6">
+                <h3><a href="story/{{story.id}}">
+                        {{ story|title}}
+                    </a></h3>
                 
-                {% for story in stories %}
-                <div class="article col-lg-6">
-                    <h3><a href="story/{{story.id}}">
-                            {{ story|title}}
-                        </a></h3>
-                    
 
-                    <div class="col-lg-2"></div>
-                    <div class = "col-lg-8">                        
-                        {% for article in articles %}
-                            
-                            {% if story.title == article.potentialstory.title %}                                               
-                            <div class="article_title ui-widget-content" data-id="{{article.id}}">
-                                {{ article.title|title|slice:":80" }} - <b>{{article.source|title}}</b>
-                            </div>
-                            {% endif %}
-                            
-                        {% endfor %}                        
-                    </div>
-                    <div class="col-lg-2"></div>
-
-                    <div class="row option_container">
+                <div class="col-lg-2"></div>
+                <div class = "col-lg-8">                        
+                    {% for article in articles %}
                         
-                        <div class="col-lg-6">
-                            <div class="options removeArticle ui-widget-header delete">
-                                DELETE ARTICLE
-                            </div>
+                        {% if story.title == article.potentialstory.title %}                                               
+                        <div class="article_title ui-widget-content" data-id="{{article.id}}">
+                            {{ article.title|title|slice:":80" }} - <b>{{article.source|title}}</b>
                         </div>
-                        <div class="col-lg-6">
-                            <div class="options updateArticle ui-widget-header reassign" data-id="{{story.id}}">
-                                RE-ASSIGN ARTICLE
-                            </div>
-                        </div>                        
-                    </div>
+                        {% endif %}
+                        
+                    {% endfor %}                        
+                </div>
+                <div class="col-lg-2"></div>
+
+                <div class="row option_container">
                     
-                </div>                  
-                {% endfor %}                
-            </div>
+                    <div class="col-lg-6">
+                        <div class="options removeArticle ui-widget-header delete">
+                            DELETE ARTICLE
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="options updateArticle ui-widget-header reassign" data-id="{{story.id}}">
+                            RE-ASSIGN ARTICLE
+                        </div>
+                    </div>                        
+                </div>
+                
+            </div>                  
+            {% endfor %}                
         </div>
+    </div>
 {% endblock %}
 
 {% block extra_js %}

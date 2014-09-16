@@ -49,6 +49,7 @@ def queueFeed(feed_name):
         return None
 
 
+# Task for checking all feeds and creating potential matching pairs
 @app.task
 def check_all_feeds(allfeeds):
     potential_matches = {}
@@ -130,6 +131,7 @@ def check_all_feeds(allfeeds):
 
     # Clean up any stories that don't have matches
     PotentialStory.objects.filter(potentialarticle__match_key=None).delete()
+    print ("Matches complete")
     return ([allfeeds, potential_matches])
 
 

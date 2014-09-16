@@ -12,20 +12,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-TEMPLATE_DEBUG = True
-
-ALLOWED_HOSTS = []
-
-
 # Application definition
-
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -93,13 +80,6 @@ TEMPLATE_DIRS = (
 CELERY_CHORD_PROPAGATES = True
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = "America/Los_Angeles"
-# Only run 4 threads total
-CELERYD_CONCURRENCY = 6
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-BROKER_URL = 'redis://localhost:6379/0'
-
-REDIS_HOST = "localhost"
-REDIS_PORT = 6379
 
 ##################
 # LOCAL SETTINGS #
